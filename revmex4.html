@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tierra Adentro — Revista de México</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Caveat:wght@600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @property --shade{ syntax:'<number>'; inherits:false; initial-value:0; }
+
+  :root{
+    /* ===== paleta México — papel claro + bloques de color saturado, NO dark-mode ===== */
+    --papel:#f7ecd8;
+    --papel-2:#efe0bf;
+    --papel-3:#e7d3a8;
+    --tinta:#1c1509;
+    --tinta-suave:#4a3c26;
+    --cempasuchil:#e8790f;
+    --cempasuchil-2:#f2921f;
+    --azulejo:#0b5c73;
+    --azulejo-2:#127e9c;
+    --grana:#a81c34;
+    --grana-2:#c92642;
+    --verde-nopal:#2f6b45;
+    --verde-bandera:#00693c;
+    --rojo-bandera:#c8102e;
+    --blanco-puro:#ffffff;
+    --linea: rgba(28,21,9,0.15);
+    --shadow: 0 20px 45px rgba(28,21,9,0.22);
+    --ease-out: cubic-bezier(.23,1,.32,1);
+    --ease-inout: cubic-bezier(.77,0,.175,1);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{ margin:0; background:var(--papel); color:var(--tinta); font-family:'Work Sans', sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; position:relative;}
+  body.locked{ overflow:hidden; }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:998; pointer-events:none; opacity:0.045; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
+  h1,h2,h3{ font-family:'Anton', sans-serif; font-weight:400; margin:0; text-transform:uppercase;}
+  p{ margin:0; }
+  a{ color:inherit; }
+  .container{ max-width:1180px; margin:0 auto; padding:0 28px; }
+  .folio{ font-family:'Anton'; font-size:0.68rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--tinta-suave); display:flex; align-items:center; gap:10px; }
+  .folio::before{ content:""; width:26px; height:2px; background:currentColor; opacity:0.5; }
+
+  .tricolor-thread{ display:flex; width:64px; height:3px; margin-top:8px; border-radius:2px; overflow:hidden; }
+  .tricolor-thread span{ flex:1; }
+  .tricolor-thread span:nth-child(1){ background:var(--verde-bandera); }
+  .tricolor-thread span:nth-child(2){ background:var(--blanco-puro); }
+  .tricolor-thread span:nth-child(3){ background:var(--rojo-bandera); }
+
+  /* ================= INTRO ================= */
+  #intro{ position:fixed; inset:0; z-index:999; background:var(--cempasuchil); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden;}
+  #intro .panel{ position:absolute; top:0; bottom:0; width:50%; background:var(--tinta); transition:transform 1s var(--ease-inout) .55s; }
+  #intro .panel.l{ left:0; }
+  #intro .panel.r{ right:0; }
+  #intro.open .panel.l{ transform:translateX(-100%); }
+  #intro.open .panel.r{ transform:translateX(100%); }
+  #intro .mark{ position:relative; z-index:2; text-align:center; opacity:0; transform:scale(.85); animation:markIn 1s var(--ease-out) .15s forwards; }
+  #intro.open .mark{ animation:markOut .5s var(--ease-out) forwards; }
+  @keyframes markIn{ to{ opacity:1; transform:scale(1);} }
+  @keyframes markOut{ to{ opacity:0; transform:scale(1.06);} }
+  #intro .sunmark{ width:78px; height:78px; margin:0 auto 18px; }
+  #intro .wordmark{ font-family:'Anton'; font-size:1.6rem; letter-spacing:0.12em; color:var(--papel); }
+  #intro .wordmark span{ color:var(--cempasuchil-2); }
+  #intro .tricolor-thread{ margin:10px auto 0; }
+  #intro .hint{ margin-top:14px; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--papel); opacity:0.6; }
+  #intro.hidden{ display:none; }
+
+  /* ================= NAV ================= */
+  header.nav{ position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:18px 28px; transition:background .3s var(--ease-out), padding .3s var(--ease-out), box-shadow .3s var(--ease-out); background:rgba(247,236,216,0); }
+  header.nav.scrolled{ background:rgba(247,236,216,0.95); backdrop-filter:blur(10px); padding:11px 28px; box-shadow:0 1px 0 var(--linea), 0 8px 20px rgba(28,21,9,0.06); }
+  .logotype{ font-family:'Anton', sans-serif; font-size:1.35rem; letter-spacing:0.02em; display:flex; align-items:baseline; gap:8px; color:var(--tinta);}
+  .logotype span{ color:var(--grana); }
+  .brandblock{ display:flex; flex-direction:column; }
+  nav.links{ display:flex; gap:34px; font-size:0.82rem; letter-spacing:0.08em; text-transform:uppercase; font-weight:700; color:var(--tinta);}
+  nav.links a{ text-decoration:none; opacity:0.75; position:relative; padding-bottom:4px;}
+  nav.links a::after{ content:""; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--grana); transition:width .25s var(--ease-out); }
+  nav.links a:hover{ opacity:1; } nav.links a:hover::after{ width:100%; }
+  .menu-btn{ display:none; background:none; border:1.5px solid var(--tinta); color:var(--tinta); width:42px; height:42px; border-radius:50%; font-size:1.1rem; cursor:pointer;}
+
+  .btn, .carta, .ticket, .flip-btn, .reportaje-lead, .reportaje-sm, .menu-btn{ -webkit-tap-highlight-color:transparent; }
+  .btn:active{ transform:scale(0.96); transition:transform .12s var(--ease-out); }
+  .flip-btn:active{ transform:scale(0.88); }
+  .ticket:active{ transform:scale(0.97) rotate(0deg); }
+  .carta:active{ filter:brightness(0.94); }
+
+  /* ================= HERO — tratado como PORTADA de revista ================= */
+  .hero{ position:relative; min-height:100vh; display:flex; flex-direction:column; padding:100px 0 0; overflow:hidden;
+    background:linear-gradient(155deg, var(--cempasuchil) 0%, var(--cempasuchil) 42%, var(--azulejo) 42%, var(--azulejo-2) 100%); }
+  .hero-inner{ position:relative; z-index:2; flex:1; display:flex; flex-direction:column; justify-content:space-between; padding-bottom:40px; }
+  .cover-top{ display:flex; justify-content:space-between; align-items:flex-start; padding:0 6vw; opacity:0; animation:fadeUp .7s var(--ease-out) 1.15s forwards; }
+  .cover-issue{ font-family:'Anton'; font-size:0.78rem; letter-spacing:0.18em; color:var(--papel); }
+  .cover-barcode{ display:flex; align-items:flex-end; gap:2px; height:30px; opacity:0.85; }
+  .cover-barcode span{ width:2px; background:var(--papel); }
+  .cover-price{ font-family:'Anton'; font-size:0.68rem; color:var(--papel); letter-spacing:0.1em; margin-top:4px; text-align:right; }
+
+  .cover-mid{ position:relative; padding:0 6vw; margin-top:14px; }
+  .cover-lines{ position:absolute; top:6px; right:6vw; display:flex; flex-direction:column; gap:10px; align-items:flex-end; max-width:230px; z-index:3; }
+  .cover-line{ opacity:0; animation:fadeUp .6s var(--ease-out) forwards; }
+  .cover-line:nth-child(1){ animation-delay:1.95s; } .cover-line:nth-child(2){ animation-delay:2.1s; }
+  .cover-line:nth-child(3){ animation-delay:2.25s; } .cover-line:nth-child(4){ animation-delay:2.4s; }
+  .cover-line b{ display:block; font-family:'Anton'; font-size:0.92rem; letter-spacing:0.01em; color:var(--tinta); background:var(--papel); padding:3px 9px; border-radius:2px; text-align:right; }
+  .cover-line span{ display:block; font-family:'Caveat'; font-size:0.95rem; color:var(--papel); text-align:right; margin-top:2px; }
+
+  h1.cover-title{ position:relative; z-index:2; font-family:'Anton'; font-size:clamp(3.6rem, 12vw, 9.5rem); line-height:0.86; letter-spacing:-0.02em; color:var(--papel); opacity:0; animation:fadeUp .9s var(--ease-out) 1.5s forwards; text-shadow:0 6px 0 rgba(0,0,0,0.08); }
+  h1.cover-title em{ font-style:normal; color:var(--tinta); -webkit-text-stroke:2px var(--papel); }
+  .cover-sub{ position:relative; z-index:2; max-width:460px; margin-top:22px; font-family:'Lora', serif; font-style:italic; font-size:1.08rem; line-height:1.55; color:var(--tinta); opacity:0; animation:fadeUp .9s var(--ease-out) 1.68s forwards; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(20px);} to{ opacity:1; transform:translateY(0);} }
+
+  .cover-bottom{ position:relative; z-index:2; padding:0 6vw; display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; opacity:0; animation:fadeUp .9s var(--ease-out) 1.85s forwards;}
+  .btn{ display:inline-flex; align-items:center; gap:10px; padding:15px 30px; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.9rem; letter-spacing:0.03em; transition:transform .18s var(--ease-out), box-shadow .25s var(--ease-out); border:none; cursor:pointer; font-family:'Work Sans', sans-serif; }
+  .btn-solid{ background:var(--tinta); color:var(--papel); }
+  .btn-solid:hover{ transform:translateY(-3px); box-shadow:0 14px 30px rgba(0,0,0,0.28); }
+  .btn-line{ border:1.5px solid var(--papel); color:var(--papel); background:none; }
+  .btn-line:hover{ background:var(--papel); color:var(--tinta); }
+  .hero-sunicon{ width:110px; height:110px; opacity:0.9; }
+
+  .picado{ position:relative; z-index:2; height:30px; display:flex; }
+  .picado .flag{ flex:1; min-width:34px; height:30px; clip-path:polygon(0 0, 100% 0, 50% 100%); transform-origin:top center; animation:sway 4.5s ease-in-out infinite; }
+  .picado .flag:nth-child(5n+1){ background:var(--grana); }
+  .picado .flag:nth-child(5n+2){ background:var(--papel); }
+  .picado .flag:nth-child(5n+3){ background:var(--tinta); }
+  .picado .flag:nth-child(5n+4){ background:var(--verde-bandera); }
+  .picado .flag:nth-child(5n+5){ background:var(--cempasuchil-2); }
+  .picado .flag:nth-child(odd){ animation-delay:-1.4s; } .picado .flag:nth-child(3n){ animation-delay:-2.6s; }
+  @keyframes sway{ 0%,100%{ transform:rotate(-2.5deg);} 50%{ transform:rotate(2.5deg);} }
+
+  section{ position:relative; padding:96px 0; }
+  .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:16px; gap:24px; flex-wrap:wrap;}
+  .section-head h2{ font-size:clamp(2.1rem, 4.5vw, 3.4rem); letter-spacing:-0.01em;}
+  .section-head p{ font-family:'Lora', serif; font-style:italic; color:var(--tinta-suave); max-width:340px; font-size:1rem; line-height:1.55;}
+  .section-rule{ height:3px; background:var(--tinta); margin:22px 0 54px; opacity:0.9; }
+
+  /* ================= LOTERIA GRID (sobre papel) ================= */
+  .loteria-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:34px; perspective:1600px; }
+  .carta{ aspect-ratio:3/4.3; border-radius:6px; background:var(--papel-2); border:6px solid var(--blanco-puro); outline:2px solid var(--tinta); outline-offset:-9px; box-shadow:var(--shadow); position:relative; overflow:hidden; cursor:pointer; transition:transform .12s linear, box-shadow .25s var(--ease-out), filter .12s var(--ease-out); display:flex; flex-direction:column; }
+  @media (hover:hover) and (pointer:fine){ .carta:hover{ box-shadow:0 26px 55px rgba(28,21,9,0.3); } }
+  .carta-num{ position:absolute; top:12px; left:14px; z-index:3; font-family:'Anton'; font-size:1.1rem; color:var(--papel); background:var(--tinta); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .carta-art{ flex:1; display:flex; align-items:center; justify-content:center; padding:26px 22px 6px;}
+  .carta-art svg{ width:100%; height:100%; }
+  .carta-banner{ background:var(--tinta); color:var(--papel); text-align:center; padding:12px 8px 14px; font-family:'Anton'; font-size:1.15rem; letter-spacing:0.03em;}
+  .carta-hint{ position:absolute; bottom:10px; right:12px; font-size:0.62rem; text-transform:uppercase; color:var(--tinta); opacity:0.55; font-weight:700; font-family:'Bangers'; letter-spacing:0.08em; }
+  .ripple{ position:absolute; border-radius:50%; pointer-events:none; background:radial-gradient(circle, rgba(168,28,52,0.4), rgba(168,28,52,0) 70%); transform:scale(0); animation:rippleAnim .55s var(--ease-out) forwards; z-index:5; }
+  @keyframes rippleAnim{ to{ transform:scale(2.6); opacity:0; } }
+
+  /* ================= SABORES — bloque de color sólido tipo "sección de revista" ================= */
+  .sabores-block{ background:var(--azulejo); color:var(--papel); }
+  .sabores-block .section-head p{ color:rgba(247,236,216,0.75); }
+  .sabores-block .folio{ color:rgba(247,236,216,0.75); }
+  .sabores-block .section-rule{ background:var(--papel); opacity:0.5; }
+  .sabores-strip{ display:flex; gap:22px; overflow-x:auto; padding:6px 4px 26px; scroll-snap-type:x proximity; }
+  .sabores-strip::-webkit-scrollbar{ height:6px; } .sabores-strip::-webkit-scrollbar-thumb{ background:rgba(247,236,216,0.3); border-radius:3px; }
+  .ticket{ flex:0 0 auto; width:250px; scroll-snap-align:start; background:var(--papel); color:var(--tinta); border-radius:4px; padding:22px 20px 24px; position:relative; box-shadow:0 16px 34px rgba(0,0,0,0.28); transform:rotate(var(--r,0deg)); cursor:pointer; transition:transform .22s var(--ease-out), box-shadow .22s var(--ease-out); }
+  @media (hover:hover) and (pointer:fine){ .ticket:hover{ transform:rotate(0deg) translateY(-6px); box-shadow:0 26px 50px rgba(0,0,0,0.34); } }
+  .ticket:nth-child(2n){ --r:-1.2deg; } .ticket:nth-child(3n){ --r:1deg; }
+  .ticket::before, .ticket::after{ content:""; position:absolute; top:50%; width:18px; height:18px; background:var(--azulejo); border-radius:50%; transform:translateY(-50%); }
+  .ticket::before{ left:-9px; } .ticket::after{ right:-9px; }
+  .ticket .num{ font-family:'Anton'; font-size:0.75rem; letter-spacing:0.08em; color:var(--grana); }
+  .ticket h3{ font-size:1.5rem; margin:10px 0 8px; line-height:1;}
+  .ticket p{ font-family:'Lora', serif; font-size:0.88rem; line-height:1.5; color:var(--tinta-suave);}
+  .ticket .tag{ display:inline-block; margin-top:14px; font-family:'Caveat'; font-size:1.1rem; color:var(--azulejo); font-weight:700; transform:rotate(-2deg);}
+
+  /* ================= REPORTAJES — columnas editoriales sobre papel ================= */
+  .reportajes{ display:grid; grid-template-columns:1.3fr 1fr; gap:40px; }
+  .reportaje-lead, .reportaje-sm{ cursor:pointer; }
+  .reportaje-lead{ border:1px solid var(--linea); border-radius:8px; overflow:hidden; display:flex; flex-direction:column; transition:border-color .25s var(--ease-out), transform .25s var(--ease-out); background:var(--blanco-puro);}
+  @media (hover:hover) and (pointer:fine){ .reportaje-lead:hover{ border-color:var(--grana); transform:translateY(-4px); } }
+  .reportaje-lead .art{ aspect-ratio:16/10; }
+  .reportaje-lead .body{ padding:34px; }
+  .reportaje-col{ display:flex; flex-direction:column; gap:34px; }
+  .reportaje-sm{ display:flex; gap:20px; padding-bottom:30px; border-bottom:1px solid var(--linea); transition:transform .25s var(--ease-out);}
+  @media (hover:hover) and (pointer:fine){ .reportaje-sm:hover{ transform:translateX(6px); } }
+  .reportaje-sm:last-child{ border-bottom:none; padding-bottom:0; }
+  .reportaje-sm .art{ width:120px; height:120px; flex:0 0 auto; border-radius:6px; overflow:hidden;}
+  .art{ background:linear-gradient(135deg, var(--grana), var(--tinta)); display:flex; align-items:center; justify-content:center;}
+  .art svg{ width:60%; height:60%; opacity:0.95; }
+  .kicker-tag{ font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; font-weight:700; color:var(--grana); margin-bottom:10px; display:block;}
+  .reportaje-lead h3{ font-size:1.9rem; line-height:1.08; margin-bottom:14px;}
+  .reportaje-sm h3{ font-size:1.15rem; line-height:1.15; margin-bottom:8px; text-transform:none; font-family:'Lora',serif; font-weight:600;}
+  .reportaje-lead p, .reportaje-sm p{ font-family:'Lora', serif; color:var(--tinta-suave); line-height:1.6; font-size:0.98rem;}
+  .reportaje-lead p:first-of-type::first-letter{ font-family:'Anton'; font-size:3rem; float:left; line-height:0.75; padding:4px 8px 0 0; color:var(--grana); }
+  .reportaje-sm p{ font-size:0.88rem; }
+  .meta-row{ display:flex; gap:16px; margin-top:18px; font-size:0.78rem; color:var(--tinta-suave); opacity:0.8; }
+  .read-more{ display:inline-block; margin-top:16px; font-size:0.78rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:var(--grana); }
+
+  .banda{ background:var(--grana); color:var(--papel); padding:70px 0; text-align:center; position:relative; }
+  .banda::before{ content:""; position:absolute; top:0; left:0; right:0; height:6px; background:linear-gradient(90deg, var(--verde-bandera) 0 33.3%, var(--blanco-puro) 33.3% 66.6%, var(--rojo-bandera) 66.6% 100%); }
+  .banda h2{ font-size:clamp(1.8rem,4vw,2.8rem); }
+  .banda p{ font-family:'Lora', serif; font-style:italic; max-width:560px; margin:16px auto 0; font-size:1.05rem;}
+
+  footer{ padding:60px 0 40px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; font-size:0.85rem; color:var(--tinta-suave); background:var(--tinta); }
+  footer .container{ color:var(--papel-2); }
+  footer .logotype{ margin-bottom:4px; color:var(--papel); }
+  footer .logotype span{ color:var(--cempasuchil-2); }
+
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ================= COMIC READER — modo lectura inmersivo, volteo real ================= */
+  #reader{ position:fixed; inset:0; z-index:500; background:#160a0d; visibility:hidden; opacity:0; transition:opacity .4s var(--ease-out), visibility 0s linear .4s; display:flex; flex-direction:column; align-items:center; justify-content:center; touch-action:none; }
+  #reader.open{ visibility:visible; opacity:1; transition:opacity .4s var(--ease-out); }
+  #readerClose{ position:fixed; top:20px; right:22px; z-index:60; width:42px; height:42px; border-radius:50%; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.18); color:var(--papel); font-size:1.1rem; cursor:pointer; backdrop-filter:blur(6px); transition:transform .25s var(--ease-out), background .25s var(--ease-out); }
+  #readerClose:hover{ transform:rotate(90deg); background:var(--cempasuchil-2); color:var(--tinta); }
+  .issue-label{ position:fixed; top:26px; left:26px; z-index:40; font-family:'Bangers'; letter-spacing:0.05em; font-size:1.05rem; color:var(--papel); opacity:0.85; text-shadow:0 2px 6px rgba(0,0,0,0.6);}
+
+  .comic-stage{ position:relative; width:min(92vw, 460px); height:min(78vh, 680px); perspective:1200px; }
+  .ribbon{ position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:34px; height:70px; z-index:35; display:flex; filter:drop-shadow(0 6px 8px rgba(0,0,0,0.4)); clip-path:polygon(0 0,100% 0,100% 82%,50% 100%,0 82%); animation:ribbonSway 3.6s ease-in-out infinite; transform-origin:top center; pointer-events:none; }
+  .ribbon span{ flex:1; }
+  .ribbon span:nth-child(1){ background:var(--verde-bandera); }
+  .ribbon span:nth-child(2){ background:var(--blanco-puro); }
+  .ribbon span:nth-child(3){ background:var(--rojo-bandera); }
+  @keyframes ribbonSway{ 0%,100%{ transform:translateX(-50%) rotate(-3deg);} 50%{ transform:translateX(-50%) rotate(3deg);} }
+
+  /* pila de hojas visible al canto — refuerza que esto es un libro, no una pantalla */
+  .page-edges{ position:absolute; right:-3px; top:6px; bottom:6px; width:8px; z-index:1; border-radius:0 4px 4px 0;
+    background:repeating-linear-gradient(0deg, #e7d3a8 0 2px, #d9c090 2px 3px); box-shadow:2px 0 6px rgba(0,0,0,0.35) inset; }
+  .comic-stage::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:40px; background:linear-gradient(90deg, rgba(0,0,0,0.6), transparent); z-index:30; pointer-events:none; border-radius:10px 0 0 10px; }
+
+  .comic-page{ position:absolute; inset:0; border-radius:10px; transform-style:preserve-3d; transform-origin:left center; transform:rotateY(0deg); transition:transform .68s var(--ease-inout); box-shadow:0 25px 60px rgba(0,0,0,0.6); cursor:grab; }
+  .comic-page.dragging{ transition:none; cursor:grabbing; }
+  .comic-page.flipped{ transform:rotateY(-176deg); }
+  /* sombra de pliegue — SIEMPRE presente en cada hoja, no solo al arrastrar (antes era el bug) */
+  .curl-shade{ position:absolute; inset:0; z-index:6; border-radius:10px; pointer-events:none; opacity:0;
+    background:linear-gradient(90deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,.28) 32%, rgba(255,255,255,.4) 46%, rgba(255,255,255,0) 58%);
+    transition:opacity .68s var(--ease-inout); }
+  .comic-page.flipped .curl-shade{ opacity:0.55; }
+  .page-face{ position:absolute; inset:0; backface-visibility:hidden; border-radius:10px; overflow:hidden; background:var(--papel); }
+  .page-back{ transform:rotateY(180deg); background:repeating-linear-gradient(135deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 14px), var(--tinta); }
+  .page-back::after{ content:"TIERRA ADENTRO"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Anton'; font-size:1.4rem; letter-spacing:0.1em; color:rgba(247,236,216,0.14); transform:rotate(-90deg); white-space:nowrap; }
+
+  .pg-cover{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:14% 9%; position:relative; }
+  .pg-cover .halftone{ position:absolute; inset:0; opacity:0.35; background-image:radial-gradient(rgba(0,0,0,0.35) 1px, transparent 1.3px); background-size:7px 7px; mix-blend-mode:multiply; }
+  .pg-cover .burst{ position:absolute; width:135%; aspect-ratio:1; opacity:0.9; animation:burstPulse 5s ease-in-out infinite; }
+  @keyframes burstPulse{ 0%,100%{ transform:rotate(0deg) scale(1);} 50%{ transform:rotate(4deg) scale(1.03);} }
+  .pg-cover .issue-tag{ position:relative; z-index:2; font-family:'Bangers'; letter-spacing:0.1em; font-size:1rem; background:var(--tinta); color:var(--papel); padding:5px 14px; border-radius:3px; margin-bottom:16px; transform:rotate(-3deg); }
+  .pg-cover .icon{ position:relative; z-index:2; width:34%; margin-bottom:14px; filter:drop-shadow(0 6px 10px rgba(0,0,0,0.25)); }
+  .pg-cover h2.title{ position:relative; z-index:2; font-family:'Bangers'; font-size:clamp(2.1rem,7vw,3rem); line-height:0.95; letter-spacing:0.01em; color:var(--tinta); text-shadow:2px 2px 0 rgba(255,255,255,0.5); }
+  .pg-cover .kicker{ position:relative; z-index:2; font-family:'Anton'; font-size:0.78rem; letter-spacing:0.16em; margin-top:14px; color:var(--tinta); opacity:0.75;}
+  .pg-cover .tapline{ position:relative; z-index:2; margin-top:22px; font-family:'Caveat'; font-size:1.2rem; color:var(--tinta); opacity:0.85; }
+
+  .pg-panel{ display:flex; flex-direction:column; height:100%; }
+  .pg-folio{ display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--tinta); color:var(--papel-2); font-family:'Anton'; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; }
+  .pg-panel-art{ flex:0 0 40%; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .pg-panel-art .halftone{ position:absolute; inset:0; opacity:0.28; background-image:radial-gradient(rgba(0,0,0,0.4) 1px, transparent 1.3px); background-size:6px 6px; mix-blend-mode:multiply; }
+  .pg-panel-art svg{ width:46%; position:relative; z-index:2; filter:drop-shadow(0 6px 14px rgba(0,0,0,0.3)); }
+  .pg-panel-caps{ flex:1; background:var(--papel); padding:20px 20px 16px; overflow-y:auto; }
+  .cap-box{ background:var(--blanco-puro); border:2.5px solid var(--tinta); border-radius:4px; padding:14px 16px 16px; margin-bottom:14px; box-shadow:3px 3px 0 rgba(28,21,9,0.22); opacity:0; transform:translateY(14px) scale(.96); }
+  .comic-page.is-active .cap-box{ animation:capPop .45s var(--ease-out) forwards; }
+  .comic-page.is-active .cap-box:nth-child(1){ animation-delay:.08s; }
+  .comic-page.is-active .cap-box:nth-child(2){ animation-delay:.16s; }
+  .comic-page.is-active .cap-box:nth-child(3){ animation-delay:.24s; }
+  @keyframes capPop{ to{ opacity:1; transform:translateY(0) scale(1); } }
+  .cap-box .lbl{ font-family:'Bangers'; letter-spacing:0.05em; font-size:1.05rem; display:block; margin-bottom:6px; }
+  .cap-box p{ font-family:'Lora', serif; font-size:0.92rem; line-height:1.5; color:var(--tinta); }
+  .pg-num{ position:absolute; bottom:10px; right:14px; font-family:'Bangers'; font-size:0.85rem; color:var(--tinta); opacity:0.55; z-index:2; }
+
+  .comic-controls{ position:fixed; bottom:22px; left:0; right:0; z-index:40; display:flex; align-items:center; justify-content:center; gap:20px; }
+  .flip-btn{ width:46px; height:46px; border-radius:50%; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.2); color:var(--papel); font-size:1.3rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background .2s var(--ease-out); backdrop-filter:blur(6px); }
+  @media (hover:hover) and (pointer:fine){ .flip-btn:hover{ background:var(--cempasuchil-2); color:var(--tinta); } }
+  .flip-btn:disabled{ opacity:0.3; cursor:default; }
+  .page-dots{ display:flex; gap:8px; }
+  .page-dots span{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.25); transition:background .25s var(--ease-out), transform .25s var(--ease-out); }
+  .page-dots span.on{ background:var(--cempasuchil-2); transform:scale(1.3); }
+  .nav-zone{ position:absolute; top:0; bottom:0; width:26%; background:none; border:none; z-index:2; }
+  .nav-zone.left{ left:0; } .nav-zone.right{ right:0; }
+  .swipe-hint{ position:fixed; bottom:78px; left:0; right:0; text-align:center; z-index:40; font-family:'Caveat'; font-size:1rem; color:var(--papel-2); opacity:0.65; }
+
+  @media (max-width:900px){
+    nav.links{ display:none; } .menu-btn{ display:block; }
+    .loteria-grid{ grid-template-columns:repeat(2,1fr); gap:20px; }
+    .reportajes{ grid-template-columns:1fr; }
+    .cover-lines{ display:none; }
+  }
+  @media (max-width:560px){
+    .loteria-grid{ grid-template-columns:1fr; max-width:320px; margin:0 auto; }
+    .container{ padding:0 20px; }
+    .comic-stage{ width:94vw; height:76vh; }
+  }
+</style>
+</head>
+<body class="locked">
+
+<div id="intro">
+  <div class="panel l"></div>
+  <div class="panel r"></div>
+  <div class="mark">
+    <svg class="sunmark" viewBox="0 0 100 100"><circle cx="50" cy="50" r="22" fill="none" stroke="#f2921f" stroke-width="2"/><circle cx="50" cy="50" r="13" fill="#f2921f" fill-opacity="0.25"/><g stroke="#f2921f" stroke-width="2"><line x1="50" y1="4" x2="50" y2="18"/><line x1="50" y1="82" x2="50" y2="96"/><line x1="4" y1="50" x2="18" y2="50"/><line x1="82" y1="50" x2="96" y2="50"/><line x1="17" y1="17" x2="26" y2="26"/><line x1="74" y1="74" x2="83" y2="83"/><line x1="17" y1="83" x2="26" y2="74"/><line x1="74" y1="26" x2="83" y2="17"/></g></svg>
+    <div class="wordmark">TIERRA<span>ADENTRO</span></div>
+    <div class="tricolor-thread" style="margin-left:auto;margin-right:auto;"><span></span><span></span><span></span></div>
+    <div class="hint">Toca para entrar</div>
+  </div>
+</div>
+
+<header class="nav" id="siteNav">
+  <div class="brandblock">
+    <div class="logotype">TIERRA<span>ADENTRO</span></div>
+    <div class="tricolor-thread"><span></span><span></span><span></span></div>
+  </div>
+  <nav class="links"><a href="#loteria">Estados</a><a href="#sabores">Sabores</a><a href="#reportajes">Reportajes</a><a href="#footer">Edición</a></nav>
+  <button class="menu-btn" aria-label="Abrir menú">☰</button>
+</header>
+
+<!-- HERO tratado como portada real de revista -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="cover-top">
+      <div><div class="cover-issue">EDICIÓN 01 · OTOÑO 2026</div></div>
+      <div style="text-align:right;">
+        <div class="cover-barcode"><span style="height:22px"></span><span style="height:30px"></span><span style="height:16px"></span><span style="height:28px"></span><span style="height:22px"></span><span style="height:30px"></span><span style="height:18px"></span><span style="height:26px"></span></div>
+        <div class="cover-price">MUESTRA DIGITAL · $0.00</div>
+      </div>
+    </div>
+
+    <div class="cover-mid">
+      <div class="cover-lines">
+        <div class="cover-line"><b>OAXACA</b><span>barro, mezcal y color</span></div>
+        <div class="cover-line"><b>6 CENOTES</b><span>que no salen en las guías</span></div>
+        <div class="cover-line"><b>MOLE NEGRO</b><span>la receta, paso a paso</span></div>
+        <div class="cover-line"><b>BAJA SUR</b><span>temporada de ballenas</span></div>
+      </div>
+      <h1 class="cover-title">MÉXICO<br>DE <em>RAÍZ</em></h1>
+      <p class="cover-sub">Una revista para recorrer el país despacio: sus cocinas de humo y comal, sus pueblos con nombre náhuatl, sus costas, sus volcanes y las manos que sostienen todo eso vivo.</p>
+    </div>
+
+    <div class="cover-bottom">
+      <div style="display:flex; gap:16px; flex-wrap:wrap;">
+        <a href="#loteria" class="btn btn-solid">Explorar los estados →</a>
+        <a href="#sabores" class="btn btn-line">Ver la mesa mexicana</a>
+      </div>
+      <svg class="hero-sunicon" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="46" fill="none" stroke="#1c1509" stroke-opacity="0.5" stroke-width="2"/>
+        <circle cx="100" cy="100" r="28" fill="#1c1509" fill-opacity="0.14"/>
+        <g stroke="#1c1509" stroke-opacity="0.45" stroke-width="2">
+          <line x1="100" y1="4" x2="100" y2="26"/><line x1="100" y1="174" x2="100" y2="196"/>
+          <line x1="4" y1="100" x2="26" y2="100"/><line x1="174" y1="100" x2="196" y2="100"/>
+          <line x1="30" y1="30" x2="46" y2="46"/><line x1="154" y1="154" x2="170" y2="170"/>
+          <line x1="30" y1="170" x2="46" y2="154"/><line x1="154" y1="46" x2="170" y2="30"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="picado" aria-hidden="true">
+    <span class="flag"></span><span class="flag"></span><span class="flag"></span><span class="flag"></span><span class="flag"></span>
+    <span class="flag"></span><span class="flag"></span><span class="flag"></span><span class="flag"></span><span class="flag"></span>
+    <span class="flag"></span><span class="flag"></span><span class="flag"></span><span class="flag"></span><span class="flag"></span>
+  </div>
+</section>
+
+<section id="loteria">
+  <div class="container">
+    <div class="folio reveal">SECCIÓN 01 — DESTINOS</div>
+    <div class="section-head reveal">
+      <h2>Lotería de destinos</h2>
+      <p>Seis cartas, seis estados. Toca cualquiera y se abre como un cómic — arrastra la hoja para pasarla.</p>
+    </div>
+    <div class="section-rule reveal"></div>
+    <div class="loteria-grid">
+      <div class="carta" data-reader="jalisco">
+        <span class="carta-num">1</span>
+        <div class="carta-art"><svg viewBox="0 0 120 120"><g fill="none" stroke="#1c1509" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M60 100 L60 55"/><path d="M60 55 C40 55 30 40 34 20"/><path d="M60 55 C80 55 90 40 86 20"/>
+          <path d="M60 70 C45 70 38 58 42 44"/><path d="M60 70 C75 70 82 58 78 44"/><ellipse cx="60" cy="105" rx="20" ry="6"/>
+        </g></svg></div>
+        <div class="carta-banner">El Agave</div>
+        <span class="carta-hint">LEER →</span>
+      </div>
+      <div class="carta" data-reader="yucatan">
+        <span class="carta-num">2</span>
+        <div class="carta-art"><svg viewBox="0 0 120 120"><g fill="none" stroke="#1c1509" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M60 20 L95 90 L25 90 Z"/><path d="M60 20 L60 90"/><path d="M42 55 L78 55"/><circle cx="60" cy="38" r="4" fill="#1c1509"/>
+        </g></svg></div>
+        <div class="carta-banner">La Pirámide</div>
+        <span class="carta-hint">LEER →</span>
+      </div>
+      <div class="carta" data-reader="cdmx">
+        <span class="carta-num">3</span>
+        <div class="carta-art"><svg viewBox="0 0 120 120"><g fill="none" stroke="#1c1509" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="60" cy="55" r="34"/><path d="M60 21 L60 12M60 98 L60 89M26 55 L17 55M103 55 L94 55"/>
+          <path d="M84 31 L91 24M29 81 L36 74M84 79 L91 86M29 29 L36 36"/><circle cx="60" cy="55" r="6" fill="#1c1509"/>
+        </g></svg></div>
+        <div class="carta-banner">El Sol Azteca</div>
+        <span class="carta-hint">LEER →</span>
+      </div>
+      <div class="carta" data-reader="oaxaca">
+        <span class="carta-num">4</span>
+        <div class="carta-art"><svg viewBox="0 0 120 120"><g fill="none" stroke="#1c1509" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 70 C40 40 80 40 100 70"/><path d="M20 70 C20 84 34 92 60 92 C86 92 100 84 100 70"/><path d="M46 58 L46 44 M74 58 L74 44"/>
+        </g></svg></div>
+        <div class="carta-banner">El Alebrije</div>
+        <span class="carta-hint">LEER →</span>
+      </div>
+      <div class="carta" data-reader="bcs">
+        <span class="carta-num">5</span>
+        <div class="carta-art"><svg viewBox="0 0 120 120"><g fill="none" stroke="#1c1509" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M25 45 C45 30 75 30 95 45 C90 65 70 85 60 92 C50 85 30 65 25 45 Z"/><path d="M40 50 C50 44 70 44 80 50"/>
+        </g></svg></div>
+        <div class="carta-banner">La Ballena</div>
+        <span class="carta-hint">LEER →</span>
+      </div>
+      <div class="carta" data-reader="chiapas">
+        <span class="carta-num">6</span>
+        <div class="carta-art"><svg viewBox="0 0 120 120"><g fill="none" stroke="#1c1509" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 90 L40 30 L55 60 L68 40 L100 90 Z"/><path d="M38 34 L42 26 L46 34"/>
+        </g></svg></div>
+        <div class="carta-banner">La Cascada</div>
+        <span class="carta-hint">LEER →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sabores" class="sabores-block">
+  <div class="container">
+    <div class="folio reveal">SECCIÓN 02 — GASTRONOMÍA</div>
+    <div class="section-head reveal">
+      <h2>Sabores de México</h2>
+      <p>Seis platos, seis cómics cortos. Toca uno.</p>
+    </div>
+    <div class="section-rule reveal"></div>
+    <div class="sabores-strip reveal">
+      <div class="ticket" data-reader="mole"><span class="num">PLATO 01</span><h3>Mole negro</h3><p>Más de veinte ingredientes molidos a mano. Oaxaca.</p><span class="tag">— imperdible</span></div>
+      <div class="ticket" data-reader="cochinita"><span class="num">PLATO 02</span><h3>Cochinita pibil</h3><p>Cerdo en achiote cocido bajo tierra. Yucatán.</p><span class="tag">— de domingo</span></div>
+      <div class="ticket" data-reader="nogada"><span class="num">PLATO 03</span><h3>Chiles en nogada</h3><p>Verde, blanco y rojo en un solo plato. Puebla.</p><span class="tag">— temporada</span></div>
+      <div class="ticket" data-reader="pastor"><span class="num">PLATO 04</span><h3>Tacos al pastor</h3><p>Trompo giratorio y piña al filo. CDMX.</p><span class="tag">— clásico</span></div>
+      <div class="ticket" data-reader="elote"><span class="num">PLATO 05</span><h3>Elote y esquites</h3><p>La botana de banqueta que nadie hace igual.</p><span class="tag">— callejero</span></div>
+      <div class="ticket" data-reader="pandemuerto"><span class="num">PLATO 06</span><h3>Pan de muerto</h3><p>Naranja, azahar y azúcar rosa cada octubre.</p><span class="tag">— de temporada</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="banda reveal"><div class="container"><h2>32 estados. Una sola invitación.</h2><p>Cada edición recorre una región distinta — sus rutas, su gente, su comida — sin apurar el paso.</p></div></div>
+
+<section id="reportajes">
+  <div class="container">
+    <div class="folio reveal">SECCIÓN 03 — REPORTAJES</div>
+    <div class="section-head reveal"><h2>Reportajes de la edición</h2><p>Historias largas. Toca cualquiera para leerla como cómic.</p></div>
+    <div class="section-rule reveal"></div>
+    <div class="reportajes reveal">
+      <article class="reportaje-lead" data-reader="teotitlan">
+        <div class="art" style="aspect-ratio:16/10;"><svg viewBox="0 0 200 130" width="70%"><g fill="none" stroke="#f7ecd8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+          <path d="M10 110 L60 40 L90 80 L120 30 L190 110"/><circle cx="150" cy="28" r="14"/></g></svg></div>
+        <div class="body">
+          <span class="kicker-tag">Oficios</span>
+          <h3>Las manos que tejen Teotitlán del Valle</h3>
+          <p>En un pueblo zapoteco de Oaxaca, tres generaciones siguen tiñendo lana con grana cochinilla y tejiendo en telar de cintura.</p>
+          <div class="meta-row"><span>4 páginas</span><span>·</span><span>Oaxaca</span></div>
+          <span class="read-more">Leer reportaje completo →</span>
+        </div>
+      </article>
+      <div class="reportaje-col">
+        <article class="reportaje-sm" data-reader="ballenas">
+          <div class="art"><svg viewBox="0 0 100 100" width="60%"><path d="M20 80 C30 30 70 30 80 80" fill="none" stroke="#f7ecd8" stroke-width="4" stroke-linecap="round"/></svg></div>
+          <div><span class="kicker-tag">Naturaleza</span><h3>Guerrero Negro, el santuario de las ballenas</h3><p>Por qué las ballenas grises regresan cada invierno a Baja California Sur.</p></div>
+        </article>
+        <article class="reportaje-sm" data-reader="talavera">
+          <div class="art"><svg viewBox="0 0 100 100" width="55%"><rect x="25" y="25" width="50" height="50" fill="none" stroke="#f7ecd8" stroke-width="4"/><path d="M25 50 L75 50 M50 25 L50 75" stroke="#f7ecd8" stroke-width="4"/></svg></div>
+          <div><span class="kicker-tag">Arquitectura</span><h3>Talavera: solo cinco talleres pueden llamarla así</h3><p>La denominación de origen que protege una técnica de 400 años.</p></div>
+        </article>
+        <article class="reportaje-sm" data-reader="realdecatorce">
+          <div class="art"><svg viewBox="0 0 100 100" width="55%"><circle cx="50" cy="50" r="26" fill="none" stroke="#f7ecd8" stroke-width="4"/><path d="M50 24 L50 12 M50 88 L50 76 M24 50 L12 50 M88 50 L76 50" stroke="#f7ecd8" stroke-width="4"/></svg></div>
+          <div><span class="kicker-tag">Rutas</span><h3>El Pueblo Mágico que casi nadie visita</h3><p>Real de Catorce, entre minas fantasma y desierto.</p></div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="footer">
+  <div class="container" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:24px; width:100%;">
+    <div>
+      <div class="logotype">TIERRA<span>ADENTRO</span></div>
+      <div class="tricolor-thread"><span></span><span></span><span></span></div>
+      <p style="max-width:280px; font-family:'Lora', serif; font-style:italic; opacity:0.85; margin-top:14px;">Una revista mexicana sobre México, hecha para leerse despacio.</p>
+    </div>
+    <div style="display:flex; gap:60px; flex-wrap:wrap;">
+      <div><p style="font-weight:600; color:var(--papel); margin-bottom:12px; text-transform:uppercase; font-size:0.78rem; letter-spacing:0.08em;">Secciones</p><p style="line-height:2;">Estados<br>Sabores<br>Reportajes</p></div>
+      <div><p style="font-weight:600; color:var(--papel); margin-bottom:12px; text-transform:uppercase; font-size:0.78rem; letter-spacing:0.08em;">Edición</p><p style="line-height:2;">01 — Otoño 2026<br>Próxima edición<br>Suscríbete</p></div>
+    </div>
+  </div>
+</footer>
+
+<!-- COMIC READER -->
+<div id="reader">
+  <button id="readerClose" aria-label="Cerrar">✕</button>
+  <div class="issue-label" id="issueLabel"></div>
+  <div class="comic-stage" id="comicStage">
+    <div class="page-edges" aria-hidden="true"></div>
+    <div class="ribbon" aria-hidden="true"><span></span><span></span><span></span></div>
+    <button class="nav-zone left" id="zoneLeft" aria-label="Página anterior" tabindex="-1"></button>
+    <button class="nav-zone right" id="zoneRight" aria-label="Página siguiente" tabindex="-1"></button>
+  </div>
+  <div class="swipe-hint">arrastrá la hoja o tocá los bordes</div>
+  <div class="comic-controls">
+    <button class="flip-btn" id="prevBtn" aria-label="Anterior">‹</button>
+    <div class="page-dots" id="pageDots"></div>
+    <button class="flip-btn" id="nextBtn" aria-label="Siguiente">›</button>
+  </div>
+</div>
+
+<script>
+  const ICONS = {
+    jalisco:'<path d="M60 100 L60 55"/><path d="M60 55 C40 55 30 40 34 20"/><path d="M60 55 C80 55 90 40 86 20"/><path d="M60 70 C45 70 38 58 42 44"/><path d="M60 70 C75 70 82 58 78 44"/><ellipse cx="60" cy="105" rx="20" ry="6"/>',
+    yucatan:'<path d="M60 20 L95 90 L25 90 Z"/><path d="M60 20 L60 90"/><path d="M42 55 L78 55"/><circle cx="60" cy="38" r="4" fill="currentColor"/>',
+    cdmx:'<circle cx="60" cy="55" r="34"/><path d="M60 21 L60 12M60 98 L60 89M26 55 L17 55M103 55 L94 55"/><path d="M84 31 L91 24M29 81 L36 74M84 79 L91 86M29 29 L36 36"/><circle cx="60" cy="55" r="6" fill="currentColor"/>',
+    oaxaca:'<path d="M20 70 C40 40 80 40 100 70"/><path d="M20 70 C20 84 34 92 60 92 C86 92 100 84 100 70"/><path d="M46 58 L46 44 M74 58 L74 44"/>',
+    bcs:'<path d="M25 45 C45 30 75 30 95 45 C90 65 70 85 60 92 C50 85 30 65 25 45 Z"/><path d="M40 50 C50 44 70 44 80 50"/>',
+    chiapas:'<path d="M20 90 L40 30 L55 60 L68 40 L100 90 Z"/><path d="M38 34 L42 26 L46 34"/>',
+    mole:'<circle cx="60" cy="60" r="30"/><path d="M45 60 L75 60 M60 45 L60 75"/>',
+    cochinita:'<path d="M30 70 Q30 40 60 40 Q90 40 90 70 Q90 90 60 90 Q30 90 30 70 Z"/><circle cx="45" cy="62" r="3" fill="currentColor"/><circle cx="75" cy="62" r="3" fill="currentColor"/>',
+    nogada:'<path d="M60 25 C40 25 30 45 35 65 C40 85 60 95 60 95 C60 95 80 85 85 65 C90 45 80 25 60 25 Z"/>',
+    pastor:'<path d="M50 20 L50 100 M70 20 L70 100" stroke-width="4"/><path d="M42 30 L78 34 M42 50 L78 54 M42 70 L78 74 M42 90 L78 90"/>',
+    elote:'<rect x="45" y="25" width="30" height="65" rx="14"/><path d="M45 40 L75 40 M45 55 L75 55 M45 70 L75 70"/>',
+    pandemuerto:'<circle cx="60" cy="65" r="28"/><path d="M60 37 L60 55 M46 46 L74 46" stroke-width="3"/>',
+    teotitlan:'<path d="M25 40 L95 40 M25 55 L95 55 M25 70 L95 70 M25 85 L95 85" stroke-width="4"/>',
+    ballenas:'<path d="M20 80 C30 30 70 30 80 80" stroke-width="4"/>',
+    talavera:'<rect x="30" y="30" width="60" height="60" stroke-width="4"/><path d="M30 60 L90 60 M60 30 L60 90" stroke-width="4"/>',
+    realdecatorce:'<circle cx="60" cy="60" r="32" stroke-width="4"/><path d="M60 24 L60 12 M60 108 L60 96 M24 60 L12 60 M108 60 L96 60" stroke-width="4"/>'
+  };
+  function iconSvg(key,color){ return `<svg viewBox="0 0 120 120" style="color:${color}"><g fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${ICONS[key]||''}</g></svg>`; }
+
+  const READER_DATA = {
+    jalisco:{ issue:"No. 01", kicker:"ESTADO · JALISCO", title:"Tierra del Tequila", accent:"#e2790f", tap:"agave, mariachi y pueblos de montaña",
+      pages:[
+        {l:"Campos de agave", t:"A las afueras de Guadalajara, las hileras de agave azul cubren el paisaje como surcos de un peine gigante. Cada planta tarda entre seis y ocho años en madurar."},
+        {l:"Pueblos con nombre propio", t:"Tequila y Tapalpa son dos caras del mismo estado: una es industria destilera Patrimonio de la Humanidad; la otra, un pueblo de tejamanil y clima de montaña."},
+        {l:"El mariachi de plaza", t:"Nació en las plazas de Jalisco, en fiestas de rancho, mucho antes del traje bordado. Escucharlo en Tlaquepaque un domingo es la versión real de la postal."}
+      ]},
+    yucatan:{ issue:"No. 02", kicker:"ESTADO · YUCATÁN", title:"Selva, Piedra y Cenote", accent:"#0b5c73", tap:"pirámides, agua turquesa y achiote",
+      pages:[
+        {l:"Antes de las nueve", t:"Llegar con la primera entrada del día significa minutos casi a solas frente a la pirámide de Kukulkán, cuando la piedra caliza cambia de color con la luz baja."},
+        {l:"Agua bajo la raíz", t:"Los cenotes son ríos subterráneos escondidos bajo la selva. Hay más de seis mil solo en la península, cada uno con su propio color y profundidad."},
+        {l:"Achiote, no chile", t:"La cocina yucateca busca profundidad, no picor: achiote, naranja agria, epazote. Herencia directa de una civilización que nunca dejó de cocinar así."}
+      ]},
+    cdmx:{ issue:"No. 03", kicker:"ESTADO · CDMX", title:"Capital en Capas", accent:"#a81c34", tap:"murales, mercados y un lago bajo el asfalto",
+      pages:[
+        {l:"Una ciudad sobre un lago", t:"Tenochtitlan sigue ahí, bajo el asfalto y el metro. El Templo Mayor se asoma entre edificios coloniales, reconstruida sobre sí misma por 700 años."},
+        {l:"Arte a la vuelta de la esquina", t:"Los murales de Rivera, Orozco y Siqueiros están en edificios de gobierno de acceso libre. El arte público aquí siempre fue, literalmente, público."},
+        {l:"Un mercado por colonia", t:"La Merced no se parece a Coyoacán. Cada colonia tiene su propio mercado de antojitos, y ninguno se repite del todo."}
+      ]},
+    oaxaca:{ issue:"No. 04", kicker:"ESTADO · OAXACA", title:"Barro, Mezcal y Color", accent:"#e8790f", tap:"alebrijes, mezcal de rancho y mole de días",
+      pages:[
+        {l:"Criaturas de copal", t:"En San Martín Tilcajete, familias enteras tallan copal en bruto hasta convertirlo en alebrijes: criaturas imposibles pintadas punto por punto durante semanas."},
+        {l:"Mezcal, no etiqueta", t:"Las mezcalerías familiares destilan en pequeños lotes de agave silvestre, distinto según la tierra donde creció la planta."},
+        {l:"Un mole de días, no horas", t:"El mole negro lleva más de veinte ingredientes y jornadas completas de molienda. Cada familia guarda su proporción como secreto."}
+      ]},
+    bcs:{ issue:"No. 05", kicker:"ESTADO · BAJA CALIFORNIA SUR", title:"Donde Nacen las Ballenas", accent:"#127e9c", tap:"migración, mar de cortés y atardeceres",
+      pages:[
+        {l:"8,000 km de viaje", t:"Cada invierno, las ballenas grises nadan desde Alaska para parir en las aguas tranquilas de Guerrero Negro y Bahía Magdalena."},
+        {l:"El acuario del mundo", t:"Jacques Cousteau llamó así al Mar de Cortés por su concentración de vida marina: mantarrayas, lobos marinos, más de 900 especies."},
+        {l:"Atardeceres sin filtro", t:"Entre desierto y mar, los atardeceres de Los Cabos y Todos Santos se incendian solos, todos los días, sin excepción."}
+      ]},
+    chiapas:{ issue:"No. 06", kicker:"ESTADO · CHIAPAS", title:"Niebla, Río y Raíz Maya", accent:"#2f6b45", tap:"cañones, cascadas y telares tzotziles",
+      pages:[
+        {l:"Un cañón en lancha", t:"El Cañón del Sumidero tiene paredes de hasta mil metros. Verlo desde una lancha, con cocodrilos en la orilla, cambia la escala de todo."},
+        {l:"Cascadas turquesa", t:"Agua Azul y Misol-Ha no necesitan retoque: los minerales del agua dan ese tono imposible, incluso en temporada de lluvias."},
+        {l:"El mismo telar", t:"En San Juan Chamula, las mujeres tejen con la técnica de telar de cintura documentada desde antes de la Conquista."}
+      ]},
+    mole:{ issue:"Sabores", kicker:"OAXACA", title:"Mole Negro", accent:"#a81c34", tap:"20 ingredientes, un solo bocado",
+      pages:[
+        {l:"Más de 20 ingredientes", t:"Chiles chilhuacle, mulato y pasilla, chocolate de metate, especias y jitomate asado se muelen por separado antes de unirse."},
+        {l:"Un plato de días", t:"Hacer mole negro para una boda puede tomar dos días completos, compartidos entre varias mujeres de la familia. Es memoria que se cocina."}
+      ]},
+    cochinita:{ issue:"Sabores", kicker:"YUCATÁN", title:"Cochinita Pibil", accent:"#0b5c73", tap:"achiote, naranja agria y horno de tierra",
+      pages:[
+        {l:"Recado rojo", t:"La carne de cerdo se marina con achiote y naranja agria, se envuelve en hoja de plátano y se cocina bajo tierra en un horno llamado píib."},
+        {l:"El domingo tiene sabor", t:"En Mérida, los puestos abren desde temprano los domingos: taco, cebolla morada curtida y un toque de habanero."}
+      ]},
+    nogada:{ issue:"Sabores", kicker:"PUEBLA", title:"Chiles en Nogada", accent:"#e8790f", tap:"verde, blanco y rojo — la bandera en un plato",
+      pages:[
+        {l:"Tres colores", t:"Chile poblano relleno de picadillo dulce, bañado en nogada de nuez fresca y coronado con granada."},
+        {l:"Una ventana corta", t:"Solo existe entre agosto y septiembre, cuando la nuez de castilla está fresca."}
+      ]},
+    pastor:{ issue:"Sabores", kicker:"CDMX", title:"Tacos al Pastor", accent:"#a81c34", tap:"del shawarma libanés al trompo mexicano",
+      pages:[
+        {l:"Herencia libanesa", t:"El trompo llegó con inmigrantes libaneses como shawarma. Con chile guajillo y achiote se volvió algo completamente distinto."},
+        {l:"La piña no es decoración", t:"El taquero corta una rebanada de piña directo del trompo. Ese golpe dulce y ácido es la firma del taco perfecto."}
+      ]},
+    elote:{ issue:"Sabores", kicker:"TODO EL PAÍS", title:"Elote y Esquites", accent:"#2f6b45", tap:"mayonesa, cotija, chile y limón",
+      pages:[ {l:"La botana de banqueta", t:"Mayonesa, queso cotija, chile piquín en polvo y limón. Cada puesto callejero jura tener la proporción correcta."} ]},
+    pandemuerto:{ issue:"Sabores", kicker:"TEMPORADA", title:"Pan de Muerto", accent:"#127e9c", tap:"naranja, azahar y azúcar rosa",
+      pages:[ {l:"Solo en octubre", t:"Aparece en panaderías con su corteza de azúcar y sus 'huesitos' formando una cruz. Se acompaña con chocolate caliente y desaparece en noviembre."} ]},
+    teotitlan:{ issue:"Reportaje", kicker:"OFICIOS · OAXACA", title:"Manos que Tejen", accent:"#e8790f", tap:"telar de cintura y grana cochinilla",
+      pages:[
+        {l:"Un pueblo, un oficio", t:"En Teotitlán del Valle, casi todas las familias tejen: oficio heredado desde antes de que existiera la palabra 'artesanía'."},
+        {l:"Grana, no colorante", t:"El rojo viene de la cochinilla, un insecto molido hasta volverse tinte — la misma técnica prehispánica."},
+        {l:"Telar de cintura", t:"Se sostiene con el cuerpo de quien teje. Es más lento, más físico, y cada pieza es distinta."},
+        {l:"Cómo visitarlo bien", t:"Comprar directo en talleres familiares, preguntar por el proceso, y entender que cada pieza representa semanas de trabajo."}
+      ]},
+    ballenas:{ issue:"Reportaje", kicker:"NATURALEZA · BCS", title:"Santuario de Ballenas", accent:"#0b5c73", tap:"8,000 km de migración cada invierno",
+      pages:[
+        {l:"El viaje más largo", t:"Cada año, las ballenas grises nadan desde el Ártico hasta Baja California Sur para aparearse y parir."},
+        {l:"Por qué esta laguna", t:"Las aguas tranquilas de Guerrero Negro protegen a las crías de depredadores mientras ganan grasa para el regreso."},
+        {l:"Temporada", t:"De enero a marzo, cooperativas locales llevan visitantes siguiendo protocolos estrictos de distancia."}
+      ]},
+    talavera:{ issue:"Reportaje", kicker:"ARQUITECTURA · PUEBLA", title:"El Barro con Nombre", accent:"#a81c34", tap:"400 años de técnica, cinco talleres certificados",
+      pages:[
+        {l:"Denominación de origen", t:"Desde 1997, solo cerámica de Puebla, Tlaxcala y Guanajuato con proceso específico puede llamarse legalmente 'talavera'."},
+        {l:"400 años de técnica", t:"Llegó de España en el siglo XVI, se mezcló con influencia china vía Filipinas, y casi no ha cambiado desde entonces."},
+        {l:"Cómo distinguirla", t:"La real suena distinto al golpe, tiene ligeras imperfecciones de mano y trae sello de denominación de origen."}
+      ]},
+    realdecatorce:{ issue:"Reportaje", kicker:"RUTAS · SAN LUIS POTOSÍ", title:"El Pueblo Fantasma", accent:"#2f6b45", tap:"un túnel, minas de plata y desierto sagrado",
+      pages:[
+        {l:"Un túnel para llegar", t:"Real de Catorce se alcanza cruzando un túnel de más de dos kilómetros excavado en la montaña — la única entrada vehicular."},
+        {l:"Minas fantasma", t:"En su época de plata tuvo más de 40,000 habitantes. Hoy quedan poco más de mil, entre casas semiderruidas."},
+        {l:"Desierto sagrado", t:"El altiplano es territorio ceremonial wixárika. Se recomienda visitar con respeto, siempre con guías locales."}
+      ]}
+  };
+
+  const introEl = document.getElementById('intro');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function closeIntro(){ introEl.classList.add('open'); document.body.classList.remove('locked'); setTimeout(()=>introEl.classList.add('hidden'),1100); }
+  if(reduceMotion){ introEl.classList.add('hidden'); document.body.classList.remove('locked'); }
+  else { introEl.addEventListener('click', closeIntro); window.addEventListener('load', ()=> setTimeout(closeIntro, 2200)); }
+
+  const navEl = document.getElementById('siteNav');
+  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 40), { passive:true });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{ entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold:0.12 });
+    revealEls.forEach(el=>io.observe(el));
+  } else { revealEls.forEach(el=>el.classList.add('in')); }
+
+  const fineHover = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  document.querySelectorAll('.carta').forEach(card=>{
+    if(fineHover){
+      card.addEventListener('mousemove', (e)=>{
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left)/r.width - 0.5, py = (e.clientY - r.top)/r.height - 0.5;
+        card.style.transform = `rotateX(${py*-14}deg) rotateY(${px*14}deg) translateZ(10px)`;
+      });
+      card.addEventListener('mouseleave', ()=>{ card.style.transform = ''; });
+    }
+    card.addEventListener('click', (e)=>{
+      const r = card.getBoundingClientRect();
+      const ripple = document.createElement('span'); ripple.className='ripple';
+      const size = Math.max(r.width, r.height);
+      ripple.style.width = ripple.style.height = size+'px';
+      ripple.style.left = (e.clientX - r.left - size/2)+'px';
+      ripple.style.top = (e.clientY - r.top - size/2)+'px';
+      card.appendChild(ripple); setTimeout(()=>ripple.remove(), 600);
+    });
+  });
+
+  const reader = document.getElementById('reader');
+  const stage = document.getElementById('comicStage');
+  const issueLabel = document.getElementById('issueLabel');
+  const pageDots = document.getElementById('pageDots');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const zoneLeft = document.getElementById('zoneLeft');
+  const zoneRight = document.getElementById('zoneRight');
+
+  let pages = [], current = 0, total = 0;
+
+  function buildPages(d){
+    const coverHtml = `
+      <div class="page-face pg-cover" style="background:${d.accent}">
+        <div class="halftone"></div>
+        <svg class="burst" viewBox="0 0 100 100" style="color:${d.accent}"><polygon fill="rgba(255,255,255,0.18)" points="50,2 58,35 90,20 66,45 98,50 66,55 90,80 58,65 50,98 42,65 10,80 34,55 2,50 34,45 10,20 42,35"/></svg>
+        <span class="issue-tag">${d.issue}</span>
+        <div class="icon">${iconSvg(d.iconKey,'#1c1509')}</div>
+        <h2 class="title">${d.title}</h2>
+        <div class="kicker">${d.kicker}</div>
+        <p class="tapline">"${d.tap}"</p>
+      </div>
+      <div class="page-face page-back"></div>
+      <div class="curl-shade"></div>`;
+    const coverPage = document.createElement('div');
+    coverPage.className = 'comic-page';
+    coverPage.innerHTML = coverHtml;
+
+    const contentPages = d.pages.map((pg,i)=>{
+      const el = document.createElement('div');
+      el.className = 'comic-page';
+      el.innerHTML = `
+        <div class="page-face pg-panel">
+          <div class="pg-folio"><span>TIERRA ADENTRO</span><span>${d.kicker}</span></div>
+          <div class="pg-panel-art" style="background:${d.accent}">
+            <div class="halftone"></div>
+            ${iconSvg(d.iconKey,'#1c1509')}
+          </div>
+          <div class="pg-panel-caps">
+            <div class="cap-box"><span class="lbl" style="color:${d.accent}">${pg.l}</span><p>${pg.t}</p></div>
+          </div>
+          <span class="pg-num">${i+2} / ${d.pages.length+1}</span>
+        </div>
+        <div class="page-face page-back"></div>
+        <div class="curl-shade"></div>`;
+      return el;
+    });
+    return [coverPage, ...contentPages];
+  }
+
+  function clearStage(){ stage.querySelectorAll('.comic-page').forEach(p=>p.remove()); }
+
+  function updateStack(){
+    total = pages.length;
+    pages.forEach((p,i)=>{
+      p.classList.remove('is-active');
+      p.style.transform=''; p.style.transition=''; p.classList.remove('dragging');
+      if(i < current){ p.classList.add('flipped'); p.style.zIndex = i - 1000; }
+      else { p.classList.remove('flipped'); p.style.zIndex = total - i; }
+    });
+    const activePage = pages[current];
+    requestAnimationFrame(()=>{ activePage.classList.add('is-active'); });
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    pageDots.innerHTML = pages.map((_,i)=>`<span class="${i===current?'on':''}"></span>`).join('');
+  }
+
+  function openReader(key){
+    const raw = READER_DATA[key];
+    if(!raw) return;
+    const d = Object.assign({iconKey:key}, raw);
+    clearStage();
+    pages = buildPages(d);
+    pages.forEach(p=>stage.appendChild(p));
+    current = 0;
+    issueLabel.textContent = `${d.kicker} — ${d.issue}`;
+    document.body.classList.add('locked');
+    reader.classList.add('open');
+    updateStack();
+  }
+  function closeReader(){ reader.classList.remove('open'); document.body.classList.remove('locked'); }
+
+  function goNext(){ if(current < total-1){ current++; updateStack(); } }
+  function goPrev(){ if(current > 0){ current--; updateStack(); } }
+
+  document.querySelectorAll('[data-reader]').forEach(el=>{
+    el.addEventListener('click', ()=> openReader(el.getAttribute('data-reader')));
+  });
+  document.getElementById('readerClose').addEventListener('click', closeReader);
+  document.addEventListener('keydown', (e)=>{
+    if(!reader.classList.contains('open')) return;
+    if(e.key === 'Escape') closeReader();
+    if(e.key === 'ArrowRight') goNext();
+    if(e.key === 'ArrowLeft') goPrev();
+  });
+  prevBtn.addEventListener('click', goPrev);
+  nextBtn.addEventListener('click', goNext);
+  zoneLeft.addEventListener('click', goPrev);
+  zoneRight.addEventListener('click', goNext);
+
+  function springTo(page, from, to, v0, onDone){
+    let angle = from, vel = v0 || 0;
+    const stiffness = 240, damping = 27;
+    let last = performance.now();
+    const shade = page.querySelector('.curl-shade');
+    function step(now){
+      const dt = Math.min((now-last)/1000, 0.032); last = now;
+      const force = -stiffness*(angle-to) - damping*vel;
+      vel += force*dt; angle += vel*dt;
+      page.style.transform = `rotateY(${angle}deg)`;
+      if(shade) shade.style.opacity = Math.min(0.85, Math.abs(angle)/176*1.2);
+      if(Math.abs(angle-to) < 0.4 && Math.abs(vel) < 8){
+        page.style.transform = `rotateY(${to}deg)`;
+        onDone && onDone();
+        return;
+      }
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  let dragState = null;
+  if(!reduceMotion){
+    stage.addEventListener('pointerdown', (e)=>{
+      if(e.target.closest('.flip-btn')) return;
+      const rect = stage.getBoundingClientRect();
+      const relX = e.clientX - rect.left;
+      let dir=null, page=null;
+      if(relX > rect.width*0.4 && current < total-1){ dir='fwd'; page = pages[current]; }
+      else if(relX <= rect.width*0.4 && current > 0){ dir='back'; page = pages[current-1]; }
+      if(!page) return;
+      page.classList.add('dragging');
+      const shade = page.querySelector('.curl-shade'); shade.style.opacity='0'; shade.style.transition='none';
+      if(dir==='back'){ page.style.zIndex = 9999; }
+      dragState = { page, dir, startX:e.clientX, width:rect.width, lastX:e.clientX, lastT:performance.now(), vel:0, angle: dir==='fwd'?0:-176 };
+      try{ stage.setPointerCapture(e.pointerId); }catch(_){}
+    });
+    stage.addEventListener('pointermove', (e)=>{
+      if(!dragState) return;
+      const {page,dir,startX,width}=dragState;
+      const dx = e.clientX - startX;
+      const now=performance.now();
+      const dt=(now-dragState.lastT)/1000;
+      if(dt>0.001){ dragState.vel = (e.clientX-dragState.lastX)/dt; }
+      dragState.lastX=e.clientX; dragState.lastT=now;
+      let angle;
+      if(dir==='fwd'){ angle = Math.max(-176, Math.min(0, (dx/width)*-220)); }
+      else { angle = Math.max(-176, Math.min(0, -176 + (dx/width)*220)); }
+      page.style.transform = `rotateY(${angle}deg)`;
+      const shade = page.querySelector('.curl-shade');
+      shade.style.opacity = Math.min(0.85, Math.abs(angle)/176*1.2);
+      dragState.angle = angle;
+    });
+    function endDrag(){
+      if(!dragState) return;
+      const {page, dir, vel, angle} = dragState;
+      page.classList.remove('dragging');
+      const shade = page.querySelector('.curl-shade'); shade.style.transition='';
+      const commitFwd = dir==='fwd' && (angle < -75 || vel < -350);
+      const commitBack = dir==='back' && (angle > -101 || vel > 350);
+      if(dir==='fwd'){
+        const target = commitFwd ? -176 : 0;
+        springTo(page, angle, target, vel*0.06, ()=>{ if(commitFwd) current++; updateStack(); });
+      } else {
+        const target = commitBack ? 0 : -176;
+        springTo(page, angle, target, vel*0.06, ()=>{ if(commitBack) current--; updateStack(); });
+      }
+      dragState = null;
+    }
+    stage.addEventListener('pointerup', endDrag);
+    stage.addEventListener('pointercancel', endDrag);
+  }
+</script>
+
+</body>
+</html>
