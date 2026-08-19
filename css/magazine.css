@@ -1008,25 +1008,38 @@ body {
 
 }
 /* =========================================================
-   V0.2 — PHYSICAL PAGE TURN
+   V0.3 — PHYSICAL PAGE CURL
 ========================================================= */
 
 .sheet {
     --turn: 0;
+    --bend: 0;
     --shadow: 0;
+    --curl-x: 100%;
+    --curl-y: 100%;
+    --curl-angle: 0deg;
+
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    top: 0;
+    left: 0;
 
     transform-origin: left center;
-
-    transition: none;
+    transform-style: preserve-3d;
 
     cursor: grab;
 
     user-select: none;
     -webkit-user-select: none;
 
-    touch-action: pan-y;
+    touch-action: none;
 
-    will-change: transform;
+    will-change:
+        transform,
+        filter;
 }
 
 
@@ -1035,16 +1048,449 @@ body {
 }
 
 
-/*
- * La rotación ahora será controlada
- * directamente desde JavaScript.
- */
+.page {
+    transform-style: preserve-3d;
 
-.sheet.flipped {
-    transform: rotateY(-180deg);
+    will-change:
+        transform,
+        filter,
+        clip-path;
 }
 
 
+/* =========================================================
+   PAGE LIGHTING
+========================================================= */
+
+.page-front::after,
+.page-back::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 80;
+
+    pointer-events: none;
+
+    opacity: var(--shadow);
+
+    transition: opacity 20ms linear;
+}
+
+
+.page-front::after {
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            transparent 0%,
+
+            transparent 48%,
+
+            rgba(0,0,0,.04) 62%,
+
+            rgba(0,0,0,.16) 81%,
+
+            rgba(0,0,0,.45) 100%
+        );
+}
+
+
+.page-back::after {
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            rgba(255,255,255,.10),
+
+            rgba(0,0,0,.20) 28%,
+
+            rgba(0,0,0,.07) 60%,
+
+            transparent 100%
+        );
+}
+
+
+/* =========================================================
+   CURL ELEMENTS
+========================================================= */
+
+.page-corner {
+
+    position: absolute;
+
+    width: 140px;
+    height: 140px;
+
+    right: 0;
+    bottom: 0;
+
+    z-index: 300;
+
+    cursor: grab;
+}
+
+
+/*
+ * Pequeña insinuación visual de que
+ * la esquina se puede tomar.
+ */
+
+.page-corner::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 54px;
+    height: 54px;
+
+    right: 0;
+    bottom: 0;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    background:
+
+        linear-gradient(
+            135deg,
+
+            transparent 48%,
+
+            rgba(255,255,255,.30) 49%,
+
+            rgba(255,255,255,.10) 61%,
+
+            rgba(0,0,0,.18) 100%
+        );
+
+    clip-path:
+        polygon(
+            100% 0,
+            100% 100%,
+            0 100%
+        );
+
+    transition:
+        opacity .22s ease;
+}
+
+
+.sheet:hover .page-corner::before {
+    opacity: .85;
+}
+
+
+/* =========================================================
+   DYNAMIC CURL
+========================================================= */
+
+.curl-layer {
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -90px;
+    bottom: -90px;
+
+    z-index: 120;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    transform-origin: center center;
+
+    border-radius:
+        60% 0 0 0;
+
+    background:
+
+        linear-gradient(
+            135deg,
+
+            rgba(255,255,255,.65) 0%,
+
+            rgba(255,255,255,.22) 20%,
+
+            rgba(0,0,0,.08) 44%,
+
+            rgba(0,0,0,.30) 61%,
+
+            transparent 73%
+        );
+
+    filter:
+        blur(.25px);
+
+    will-change:
+        opacity,
+        transform;
+}
+
+
+.sheet.turning .curl-layer,
+.sheet.dragging .curl-layer {
+    opacity: calc(var(--bend) * .95);
+}
+
+
+/*
+ * Sombra que el papel curvado proyecta
+ * sobre lo que está debajo.
+ */
+
+.curl-shadow {
+
+    position: absolute;
+
+    width: 250px;
+    height: 220px;
+
+    right: -100px;
+    bottom: -95px;
+
+    z-index: 90;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    border-radius: 50%;
+
+    background:
+
+        radial-gradient(
+            ellipse at center,
+
+            rgba(0,0,0,.40) 0%,
+
+            rgba(0,0,0,.19) 35%,
+
+            rgba(0,0,0,.05) 58%,
+
+            transparent 74%
+        );
+
+    filter:
+        blur(10px);
+
+    will-change:
+        transform,
+        opacity;
+}
+
+
+.sheet.turning .curl-shadow,
+.sheet.dragging .curl-shadow {
+
+    opacity:
+        calc(var(--bend) * .75);
+}
+
+
+/* =========================================================
+   FLEXIBLE PAPER
+========================================================= */
+
+.sheet.turning {
+
+    filter:
+
+        drop-shadow(
+            18px
+            20px
+            20px
+            rgba(0,0,0,.24)
+        );
+}
+
+
+/*
+ * El frente recibe una luz sobre el borde
+ * conforme empieza la curvatura.
+ */
+
+.sheet.turning .page-front,
+.sheet.dragging .page-front {
+
+    box-shadow:
+
+        inset -6px 0 12px
+        rgba(255,255,255,.13),
+
+        inset -22px 0 28px
+        rgba(0,0,0,.08);
+}
+
+
+/* =========================================================
+   PAPER EDGE
+========================================================= */
+
+.sheet::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 5px;
+
+    top: 2px;
+    bottom: 2px;
+
+    right: -4px;
+
+    z-index: -1;
+
+    background:
+
+        repeating-linear-gradient(
+            to right,
+
+            #cbc7bd 0px,
+
+            #f2eee4 1px,
+
+            #d7d2c7 2px
+        );
+
+    opacity: .72;
+}
+
+
+/* =========================================================
+   BOOK SPINE
+========================================================= */
+
+.book::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 22px;
+
+    top: -2px;
+    bottom: -2px;
+
+    left: -11px;
+
+    z-index: 500;
+
+    pointer-events: none;
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            transparent,
+
+            rgba(0,0,0,.25),
+
+            rgba(255,255,255,.05),
+
+            rgba(0,0,0,.27),
+
+            transparent
+        );
+
+    opacity: .6;
+
+    filter:
+        blur(.7px);
+}
+
+
+/* =========================================================
+   INNER SPINE SHADOW
+========================================================= */
+
+.page::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 70;
+
+    pointer-events: none;
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            rgba(0,0,0,.17),
+
+            rgba(0,0,0,.055) 5%,
+
+            transparent 14%,
+
+            transparent 90%,
+
+            rgba(0,0,0,.035)
+        );
+}
+
+
+/* =========================================================
+   PAPER TEXTURE
+========================================================= */
+
+.page {
+
+    background-image:
+
+        repeating-linear-gradient(
+            0deg,
+
+            rgba(40,30,20,.008) 0px,
+
+            rgba(40,30,20,.008) 1px,
+
+            transparent 1px,
+
+            transparent 3px
+        );
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 720px) {
+
+    .page-corner {
+
+        width: 125px;
+        height: 125px;
+    }
+
+
+    .curl-layer {
+
+        width: 150px;
+        height: 150px;
+    }
+
+}
 /* =========================================================
    LIGHT / SHADOW DURING PAGE TURN
 ========================================================= */
