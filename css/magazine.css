@@ -1007,3 +1007,321 @@ body {
     }
 
 }
+/* =========================================================
+   V0.2 — PHYSICAL PAGE TURN
+========================================================= */
+
+.sheet {
+    --turn: 0;
+    --shadow: 0;
+
+    transform-origin: left center;
+
+    transition: none;
+
+    cursor: grab;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    touch-action: pan-y;
+
+    will-change: transform;
+}
+
+
+.sheet.dragging {
+    cursor: grabbing;
+}
+
+
+/*
+ * La rotación ahora será controlada
+ * directamente desde JavaScript.
+ */
+
+.sheet.flipped {
+    transform: rotateY(-180deg);
+}
+
+
+/* =========================================================
+   LIGHT / SHADOW DURING PAGE TURN
+========================================================= */
+
+.page-front::after,
+.page-back::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 80;
+
+    pointer-events: none;
+
+    opacity: var(--shadow);
+
+    transition: opacity 50ms linear;
+}
+
+
+/*
+ * Frente de la hoja.
+ *
+ * Conforme comienza a elevarse,
+ * el borde derecho se oscurece.
+ */
+
+.page-front::after {
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            transparent 0%,
+
+            transparent 42%,
+
+            rgba(0,0,0,.05) 58%,
+
+            rgba(0,0,0,.18) 79%,
+
+            rgba(0,0,0,.43) 100%
+        );
+}
+
+
+/*
+ * Reverso de la hoja.
+ *
+ * Simula luz atravesando el papel.
+ */
+
+.page-back::after {
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            rgba(255,255,255,.05),
+
+            rgba(0,0,0,.18) 35%,
+
+            rgba(0,0,0,.06) 72%,
+
+            transparent
+        );
+}
+
+
+/* =========================================================
+   PAPER FLEX
+========================================================= */
+
+.page-front,
+.page-back {
+
+    transition:
+        filter 80ms linear;
+
+    will-change:
+        transform,
+        filter;
+}
+
+
+/*
+ * Sombra proyectada sobre la revista
+ * mientras la hoja está levantada.
+ */
+
+.sheet.turning {
+
+    filter:
+
+        drop-shadow(
+            16px
+            18px
+            18px
+            rgba(0,0,0,.24)
+        );
+}
+
+
+/* =========================================================
+   PAGE CURL EDGE
+========================================================= */
+
+.sheet .page-front {
+
+    clip-path:
+        polygon(
+            0 0,
+            100% 0,
+            100% 100%,
+            0 100%
+        );
+}
+
+
+/*
+ * Banda luminosa en la parte que se curva.
+ */
+
+.sheet.turning .page-front {
+
+    box-shadow:
+
+        inset -12px 0 20px rgba(255,255,255,.08),
+
+        inset -30px 0 40px rgba(0,0,0,.09);
+}
+
+
+/* =========================================================
+   BOOK CENTER / SPINE
+========================================================= */
+
+.book::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 16px;
+
+    top: 0;
+    bottom: 0;
+
+    left: -8px;
+
+    z-index: 100;
+
+    pointer-events: none;
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            transparent,
+
+            rgba(0,0,0,.24),
+
+            rgba(255,255,255,.08),
+
+            rgba(0,0,0,.18),
+
+            transparent
+        );
+
+    opacity: .48;
+
+    filter: blur(.5px);
+}
+
+
+/* =========================================================
+   PAGE CORNER
+========================================================= */
+
+.page-corner {
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    right: 0;
+    bottom: 0;
+
+    z-index: 200;
+
+    cursor: grab;
+}
+
+
+.page-corner::before {
+
+    content: "";
+
+    position: absolute;
+
+    right: 0;
+    bottom: 0;
+
+    width: 44px;
+    height: 44px;
+
+    opacity: 0;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            transparent 49%,
+            rgba(255,255,255,.16) 50%,
+            rgba(0,0,0,.12) 100%
+        );
+
+    transition:
+        opacity .25s ease;
+}
+
+
+.sheet:hover .page-corner::before {
+
+    opacity: 1;
+}
+
+
+/* =========================================================
+   ACTIVE PAGE DEPTH
+========================================================= */
+
+.sheet.active-sheet {
+
+    transform-style: preserve-3d;
+}
+
+
+/* =========================================================
+   SMALL PAPER TEXTURE
+========================================================= */
+
+.page {
+
+    background-image:
+
+        repeating-linear-gradient(
+            0deg,
+
+            rgba(0,0,0,.009) 0px,
+
+            rgba(0,0,0,.009) 1px,
+
+            transparent 1px,
+
+            transparent 3px
+        );
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 720px) {
+
+    .page-corner {
+
+        width: 110px;
+        height: 110px;
+    }
+
+}
