@@ -1,12 +1,17 @@
 /* =========================================================
    MÉXICO — REVISTA DIGITAL
-   BOOK ENGINE v0.4
+   BOOK ENGINE v0.5
 ========================================================= */
 
 
 /* =========================================================
    DOM
 ========================================================= */
+
+const magazine =
+    document.getElementById(
+        "magazine"
+    );
 
 const leftSlot =
     document.getElementById(
@@ -31,6 +36,11 @@ const turnFront =
 const turnBack =
     document.getElementById(
         "turnBack"
+    );
+
+const pageCastShadow =
+    document.getElementById(
+        "pageCastShadow"
     );
 
 const nextButton =
@@ -65,7 +75,7 @@ const totalCounter =
 
 
 /* =========================================================
-   PAGE DATA
+   PAGES
 ========================================================= */
 
 const pages = [
@@ -105,7 +115,6 @@ const pages = [
         `
     },
 
-
     {
         number: 2,
 
@@ -140,7 +149,6 @@ const pages = [
             </div>
         `
     },
-
 
     {
         number: 3,
@@ -179,7 +187,6 @@ const pages = [
         `
     },
 
-
     {
         number: 4,
 
@@ -214,7 +221,6 @@ const pages = [
         `
     },
 
-
     {
         number: 5,
 
@@ -247,7 +253,6 @@ const pages = [
         `
     },
 
-
     {
         number: 6,
 
@@ -276,7 +281,6 @@ const pages = [
         `
     },
 
-
     {
         number: 7,
 
@@ -299,7 +303,6 @@ const pages = [
             </div>
         `
     },
-
 
     {
         number: 8,
@@ -347,6 +350,38 @@ let isAnimating = false;
    HELPERS
 ========================================================= */
 
+function clamp(
+    value,
+    min,
+    max
+) {
+
+    return Math.min(
+        Math.max(
+            value,
+            min
+        ),
+        max
+    );
+
+}
+
+
+function easeInOutCubic(t) {
+
+    return t < .5
+
+        ? 4 * t * t * t
+
+        : 1 -
+        Math.pow(
+            -2 * t + 2,
+            3
+        ) / 2;
+
+}
+
+
 function getPage(index) {
 
     if (
@@ -355,32 +390,29 @@ function getPage(index) {
     ) {
 
         return `
-            <div class="
-                page-content
-                page-empty
-            ">
+            <div
+                class="
+                    page-content
+                    page-empty
+                ">
             </div>
         `;
 
     }
 
-    return pages[index].html;
+
+    return pages[
+        index
+    ].html;
 
 }
 
 
 /* =========================================================
-   SPREAD LOGIC
+   SPREAD
 ========================================================= */
 
 function getSpreadPages() {
-
-    /*
-     * Spread 0:
-     *
-     * izquierda vacía
-     * derecha portada
-     */
 
     if (
         currentSpread === 0
@@ -389,7 +421,6 @@ function getSpreadPages() {
         return {
 
             left: -1,
-
             right: 0
 
         };
@@ -397,34 +428,49 @@ function getSpreadPages() {
     }
 
 
-    /*
-     * Spread 1:
-     *
-     * página 2
-     * página 3
-     *
-     * Spread 2:
-     *
-     * página 4
-     * página 5
-     */
-
-    const leftIndex =
-        currentSpread * 2 - 1;
-
-    const rightIndex =
-        currentSpread * 2;
-
-
     return {
 
         left:
-            leftIndex,
+            currentSpread * 2 - 1,
 
         right:
-            rightIndex
+            currentSpread * 2
 
     };
+
+}
+
+
+/* =========================================================
+   BOOK MODE
+========================================================= */
+
+function updateBookMode() {
+
+    magazine.classList.remove(
+        "cover-mode",
+        "open-mode",
+        "opening"
+    );
+
+
+    if (
+        currentSpread === 0
+    ) {
+
+        magazine.classList.add(
+            "cover-mode"
+        );
+
+    }
+
+    else {
+
+        magazine.classList.add(
+            "open-mode"
+        );
+
+    }
 
 }
 
@@ -451,6 +497,8 @@ function renderSpread() {
         );
 
 
+    updateBookMode();
+
     updateCounter();
 
 }
@@ -466,13 +514,18 @@ function updateCounter() {
         getSpreadPages();
 
 
-    let visiblePage =
-        spread.right + 1;
+    let visiblePage;
 
 
     if (
-        currentSpread > 0
+        currentSpread === 0
     ) {
+
+        visiblePage = 1;
+
+    }
+
+    else {
 
         visiblePage =
             spread.left + 1;
@@ -482,10 +535,7 @@ function updateCounter() {
 
     pageCounter.textContent =
         String(
-            Math.max(
-                visiblePage,
-                1
-            )
+            visiblePage
         ).padStart(
             2,
             "0"
@@ -504,96 +554,31 @@ function updateCounter() {
 
 
 /* =========================================================
-   ANIMATE FORWARD
+   PHYSICAL TURN
 ========================================================= */
 
-function nextSpread() {
+function animatePhysicalTurn({
 
-    if (isAnimating) {
-        return;
-    }
+    sheet,
 
+    direction,
 
-    const maxSpread =
-        Math.ceil(
-            pages.length / 2
-        );
+    from,
 
+    to,
 
-    if (
-        currentSpread >=
-        maxSpread
-    ) {
-        return;
-    }
+    duration,
 
+    onComplete
 
-    const current =
-        getSpreadPages();
-
-
-    const nextSpreadIndex =
-        currentSpread + 1;
-
-
-    const nextLeft =
-        nextSpreadIndex * 2 - 1;
-
-
-    const nextRight =
-        nextSpreadIndex * 2;
-
-
-    /*
-     * La página que vemos a la derecha
-     * será el frente de la hoja.
-     */
-
-    turnFront.innerHTML =
-        getPage(
-            current.right
-        );
-
-
-    /*
-     * El reverso será la página que
-     * aparecerá a la izquierda después.
-     */
-
-    turnBack.innerHTML =
-        getPage(
-            nextLeft
-        );
-
-
-    /*
-     * Debajo ya ponemos la página
-     * que quedará visible a la derecha.
-     */
-
-    rightSlot.innerHTML =
-        getPage(
-            nextRight
-        );
-
-
-    turningSheet.classList.add(
-        "active"
-    );
-
-
-    turningSheet.style.transform =
-        `
-        rotateY(0deg)
-        translateZ(0)
-        `;
-
+}) {
 
     isAnimating = true;
 
 
-    const duration =
-        850;
+    sheet.classList.add(
+        "active"
+    );
 
 
     const start =
@@ -602,62 +587,221 @@ function nextSpread() {
 
     function frame(now) {
 
-        const progress =
-            Math.min(
+        const raw =
+            clamp(
                 (
                     now -
                     start
                 ) /
                 duration,
+                0,
                 1
             );
 
 
         const eased =
-            progress < .5
-
-                ? 4 *
-                  progress *
-                  progress *
-                  progress
-
-                : 1 -
-                  Math.pow(
-                      -2 *
-                      progress +
-                      2,
-                      3
-                  ) /
-                  2;
+            easeInOutCubic(
+                raw
+            );
 
 
-        const angle =
-            -180 *
+        const progress =
+            from +
+            (
+                to - from
+            ) *
             eased;
 
 
+        const angle =
+            direction ===
+            "forward"
+
+                ? -180 * progress
+
+                : 180 * progress;
+
+
+        /*
+         * Bend:
+         *
+         * 0 al inicio
+         * 1 cerca del centro
+         * 0 al final
+         */
+
         const bend =
             Math.sin(
-                eased *
+                progress *
                 Math.PI
             );
 
 
-        turningSheet.style.transform =
+        /*
+         * Arco vertical.
+         */
+
+        const rotateX =
+            Math.sin(
+                progress *
+                Math.PI
+            ) *
+            -4.2;
+
+
+        /*
+         * Hace que el papel
+         * pierda ligeramente anchura
+         * cuando está de canto.
+         */
+
+        const scaleX =
+            1 -
+            bend *
+            .055;
+
+
+        /*
+         * Elevamos la hoja.
+         */
+
+        const lift =
+            bend *
+            48;
+
+
+        /*
+         * Pequeña inclinación del borde.
+         */
+
+        const skew =
+            bend *
+            (
+                direction ===
+                "forward"
+
+                    ? -1.5
+
+                    : 1.5
+            );
+
+
+        sheet.style.transform =
             `
             rotateY(${angle}deg)
-            translateZ(${bend * 30}px)
+            rotateX(${rotateX}deg)
+            skewY(${skew}deg)
+            scaleX(${scaleX})
+            translateZ(${lift}px)
             `;
 
 
-        turningSheet.style.setProperty(
+        /*
+         * Sombra de la hoja.
+         */
+
+        sheet.style.setProperty(
             "--turn-shadow",
-            bend * .75
+            bend * .88
         );
 
 
+        sheet.style.setProperty(
+            "--shadow-power",
+            bend * .92
+        );
+
+
+        sheet.style.setProperty(
+            "--fold",
+            bend
+        );
+
+
+        sheet.style.setProperty(
+            "--fold-offset",
+            progress * 120
+        );
+
+
+        /*
+         * Sombra proyectada
+         * sobre la hoja inferior.
+         */
+
         if (
-            progress < 1
+            direction ===
+            "forward"
+        ) {
+
+            pageCastShadow.style.left =
+                "50%";
+
+            pageCastShadow.style.transformOrigin =
+                "left center";
+
+        }
+
+        else {
+
+            pageCastShadow.style.left =
+                "0";
+
+            pageCastShadow.style.transformOrigin =
+                "right center";
+
+        }
+
+
+        pageCastShadow.style.opacity =
+            bend * .65;
+
+
+        pageCastShadow.style.transform =
+            `
+            scaleX(
+                ${1 + bend * .35}
+            )
+            translateZ(
+                ${bend * 8}px
+            )
+            `;
+
+
+        /*
+         * Lighting independiente
+         * para anverso y reverso.
+         */
+
+        const frontBrightness =
+            1 -
+            bend * .18;
+
+
+        const backBrightness =
+            .84 +
+            progress *
+            .16;
+
+
+        turnFront.style.filter =
+            `
+            brightness(
+                ${frontBrightness}
+            )
+            `;
+
+
+        turnBack.style.filter =
+            `
+            brightness(
+                ${backBrightness}
+            )
+            `;
+
+
+        if (
+            raw < 1
         ) {
 
             requestAnimationFrame(
@@ -668,22 +812,30 @@ function nextSpread() {
 
         else {
 
-            currentSpread++;
-
-
-            turningSheet.classList.remove(
+            sheet.classList.remove(
                 "active"
             );
 
 
-            turningSheet.style.transform =
+            pageCastShadow.style.opacity =
+                "0";
+
+
+            sheet.style.transform =
                 "rotateY(0deg)";
+
+
+            turnFront.style.filter =
+                "";
+
+            turnBack.style.filter =
+                "";
 
 
             isAnimating = false;
 
 
-            renderSpread();
+            onComplete?.();
 
         }
 
@@ -698,7 +850,270 @@ function nextSpread() {
 
 
 /* =========================================================
-   ANIMATE BACKWARD
+   OPEN COVER
+========================================================= */
+
+function openCover() {
+
+    if (
+        isAnimating ||
+        currentSpread !== 0
+    ) {
+        return;
+    }
+
+
+    /*
+     * Portada como frente.
+     */
+
+    turnFront.innerHTML =
+        getPage(
+            0
+        );
+
+
+    /*
+     * Página 02
+     * queda al reverso físico
+     * de la portada.
+     */
+
+    turnBack.innerHTML =
+        getPage(
+            1
+        );
+
+
+    /*
+     * Oaxaca ya espera debajo
+     * en el lado derecho.
+     */
+
+    rightSlot.innerHTML =
+        getPage(
+            2
+        );
+
+
+    magazine.classList.add(
+        "opening"
+    );
+
+
+    turningSheet.style.left =
+        "0";
+
+
+    turningSheet.style.width =
+        "100%";
+
+
+    turningSheet.style.transformOrigin =
+        "left center";
+
+
+    /*
+     * Expandimos primero
+     * la revista.
+     */
+
+    magazine.classList.remove(
+        "cover-mode"
+    );
+
+
+    magazine.classList.add(
+        "open-mode"
+    );
+
+
+    setTimeout(
+        () => {
+
+            /*
+             * Ahora limitamos la hoja
+             * a la página derecha física.
+             */
+
+            turningSheet.style.width =
+                "50%";
+
+
+            turningSheet.style.left =
+                "50%";
+
+
+            turningSheet.style.transformOrigin =
+                "left center";
+
+
+            leftSlot.innerHTML =
+                getPage(
+                    1
+                );
+
+
+            animatePhysicalTurn({
+
+                sheet:
+                    turningSheet,
+
+                direction:
+                    "forward",
+
+                from:
+                    0,
+
+                to:
+                    1,
+
+                duration:
+                    950,
+
+                onComplete:
+                    () => {
+
+                        currentSpread = 1;
+
+                        turningSheet.style.width =
+                            "50%";
+
+                        turningSheet.style.left =
+                            "50%";
+
+                        magazine.classList.remove(
+                            "opening"
+                        );
+
+                        renderSpread();
+
+                    }
+
+            });
+
+        },
+
+        260
+    );
+
+}
+
+
+/* =========================================================
+   NEXT SPREAD
+========================================================= */
+
+function nextSpread() {
+
+    if (isAnimating) {
+        return;
+    }
+
+
+    /*
+     * Si estamos en portada,
+     * primero abrimos la revista.
+     */
+
+    if (
+        currentSpread === 0
+    ) {
+
+        openCover();
+
+        return;
+
+    }
+
+
+    const nextSpreadIndex =
+        currentSpread + 1;
+
+
+    const nextLeft =
+        nextSpreadIndex * 2 - 1;
+
+
+    const nextRight =
+        nextSpreadIndex * 2;
+
+
+    if (
+        nextLeft >=
+        pages.length
+    ) {
+        return;
+    }
+
+
+    const current =
+        getSpreadPages();
+
+
+    turnFront.innerHTML =
+        getPage(
+            current.right
+        );
+
+
+    turnBack.innerHTML =
+        getPage(
+            nextLeft
+        );
+
+
+    rightSlot.innerHTML =
+        getPage(
+            nextRight
+        );
+
+
+    turningSheet.style.width =
+        "50%";
+
+
+    turningSheet.style.left =
+        "50%";
+
+
+    turningSheet.style.transformOrigin =
+        "left center";
+
+
+    animatePhysicalTurn({
+
+        sheet:
+            turningSheet,
+
+        direction:
+            "forward",
+
+        from:
+            0,
+
+        to:
+            1,
+
+        duration:
+            900,
+
+        onComplete:
+            () => {
+
+                currentSpread++;
+
+                renderSpread();
+
+            }
+
+    });
+
+}
+
+
+/* =========================================================
+   PREVIOUS SPREAD
 ========================================================= */
 
 function previousSpread() {
@@ -711,6 +1126,22 @@ function previousSpread() {
     }
 
 
+    /*
+     * Volvemos de spread 1
+     * a portada.
+     */
+
+    if (
+        currentSpread === 1
+    ) {
+
+        closeToCover();
+
+        return;
+
+    }
+
+
     const current =
         getSpreadPages();
 
@@ -719,40 +1150,12 @@ function previousSpread() {
         currentSpread - 1;
 
 
-    let previousLeft;
-    let previousRight;
+    const previousLeft =
+        previousSpreadIndex * 2 - 1;
 
 
-    if (
-        previousSpreadIndex === 0
-    ) {
-
-        previousLeft = -1;
-        previousRight = 0;
-
-    }
-
-    else {
-
-        previousLeft =
-            previousSpreadIndex * 2 - 1;
-
-        previousRight =
-            previousSpreadIndex * 2;
-
-    }
-
-
-    /*
-     * La hoja arranca del lado izquierdo.
-     */
-
-    turningSheet.style.left =
-        "0";
-
-
-    turningSheet.style.transformOrigin =
-        "right center";
+    const previousRight =
+        previousSpreadIndex * 2;
 
 
     turnFront.innerHTML =
@@ -773,136 +1176,164 @@ function previousSpread() {
         );
 
 
-    turningSheet.classList.add(
-        "active"
-    );
+    turningSheet.style.width =
+        "50%";
 
 
-    turningSheet.style.transform =
-        `
-        rotateY(0deg)
-        translateZ(0)
-        `;
+    turningSheet.style.left =
+        "0";
 
 
-    isAnimating = true;
+    turningSheet.style.transformOrigin =
+        "right center";
 
 
-    const duration =
-        850;
+    animatePhysicalTurn({
 
+        sheet:
+            turningSheet,
 
-    const start =
-        performance.now();
+        direction:
+            "backward",
 
+        from:
+            0,
 
-    function frame(now) {
+        to:
+            1,
 
-        const progress =
-            Math.min(
-                (
-                    now -
-                    start
-                ) /
-                duration,
-                1
-            );
+        duration:
+            900,
 
+        onComplete:
+            () => {
 
-        const eased =
-            progress < .5
+                currentSpread--;
 
-                ? 4 *
-                  progress *
-                  progress *
-                  progress
+                turningSheet.style.left =
+                    "50%";
 
-                : 1 -
-                  Math.pow(
-                      -2 *
-                      progress +
-                      2,
-                      3
-                  ) /
-                  2;
+                turningSheet.style.transformOrigin =
+                    "left center";
 
+                renderSpread();
 
-        const angle =
-            180 *
-            eased;
+            }
 
-
-        const bend =
-            Math.sin(
-                eased *
-                Math.PI
-            );
-
-
-        turningSheet.style.transform =
-            `
-            rotateY(${angle}deg)
-            translateZ(${bend * 30}px)
-            `;
-
-
-        turningSheet.style.setProperty(
-            "--turn-shadow",
-            bend * .75
-        );
-
-
-        if (
-            progress < 1
-        ) {
-
-            requestAnimationFrame(
-                frame
-            );
-
-        }
-
-        else {
-
-            currentSpread--;
-
-
-            turningSheet.classList.remove(
-                "active"
-            );
-
-
-            turningSheet.style.left =
-                "50%";
-
-
-            turningSheet.style.transformOrigin =
-                "left center";
-
-
-            turningSheet.style.transform =
-                "rotateY(0deg)";
-
-
-            isAnimating = false;
-
-
-            renderSpread();
-
-        }
-
-    }
-
-
-    requestAnimationFrame(
-        frame
-    );
+    });
 
 }
 
 
 /* =========================================================
-   COVER
+   CLOSE TO COVER
+========================================================= */
+
+function closeToCover() {
+
+    if (
+        isAnimating ||
+        currentSpread !== 1
+    ) {
+        return;
+    }
+
+
+    /*
+     * Página izquierda:
+     * página 02.
+     *
+     * Al cerrar,
+     * vuelve a convertirse en reverso
+     * de la portada.
+     */
+
+    turnFront.innerHTML =
+        getPage(
+            1
+        );
+
+
+    turnBack.innerHTML =
+        getPage(
+            0
+        );
+
+
+    turningSheet.style.width =
+        "50%";
+
+
+    turningSheet.style.left =
+        "0";
+
+
+    turningSheet.style.transformOrigin =
+        "right center";
+
+
+    animatePhysicalTurn({
+
+        sheet:
+            turningSheet,
+
+        direction:
+            "backward",
+
+        from:
+            0,
+
+        to:
+            1,
+
+        duration:
+            900,
+
+        onComplete:
+            () => {
+
+                currentSpread = 0;
+
+
+                /*
+                 * Volvemos al modo
+                 * revista cerrada.
+                 */
+
+                renderSpread();
+
+
+                turningSheet.style.left =
+                    "0";
+
+
+                turningSheet.style.width =
+                    "100%";
+
+
+                setTimeout(
+                    () => {
+
+                        turningSheet.style.left =
+                            "50%";
+
+                        turningSheet.style.width =
+                            "50%";
+
+                    },
+
+                    760
+                );
+
+            }
+
+    });
+
+}
+
+
+/* =========================================================
+   COVER BUTTON
 ========================================================= */
 
 function goToCover() {
@@ -912,10 +1343,22 @@ function goToCover() {
     }
 
 
-    currentSpread = 0;
+    if (
+        currentSpread === 0
+    ) {
+        return;
+    }
 
 
-    renderSpread();
+    /*
+     * Por ahora navegamos hacia atrás
+     * una hoja por pulsación.
+     *
+     * Después podemos hacer navegación
+     * rápida animada.
+     */
+
+    previousSpread();
 
 }
 
@@ -987,7 +1430,9 @@ fullscreenButton.addEventListener(
 
 
 document.addEventListener(
+
     "keydown",
+
     event => {
 
         if (
@@ -1010,11 +1455,12 @@ document.addEventListener(
         }
 
     }
+
 );
 
 
 /* =========================================================
-   INITIAL
+   INITIALIZE
 ========================================================= */
 
 renderSpread();
