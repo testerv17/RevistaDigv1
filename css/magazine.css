@@ -1412,3 +1412,389 @@ body {
     }
 
 }
+
+/* =========================================================
+   V0.5 — CLOSED COVER + ADVANCED PAGE TURN
+========================================================= */
+
+
+/* =========================================================
+   CLOSED COVER MODE
+========================================================= */
+
+.magazine.cover-mode {
+    width: 50%;
+
+    grid-template-columns: 1fr;
+
+    margin: 0 auto;
+
+    transform:
+        rotateX(2deg)
+        rotateY(-3deg)
+        translateZ(0);
+
+    transition:
+        width .75s cubic-bezier(.22,.8,.2,1),
+        transform .75s cubic-bezier(.22,.8,.2,1);
+}
+
+
+.magazine.cover-mode .left-slot {
+    display: none;
+}
+
+
+.magazine.cover-mode .right-slot {
+    grid-column: 1;
+}
+
+
+.magazine.cover-mode .spine {
+    left: 0;
+
+    opacity: .25;
+}
+
+
+.magazine.cover-mode .turning-sheet {
+    width: 100%;
+
+    left: 0;
+
+    transform-origin:
+        left center;
+}
+
+
+/* =========================================================
+   OPEN MAGAZINE MODE
+========================================================= */
+
+.magazine.open-mode {
+    width: 100%;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    transform:
+        rotateX(1.8deg)
+        rotateY(0deg);
+
+    transition:
+        width .75s cubic-bezier(.22,.8,.2,1),
+        transform .75s cubic-bezier(.22,.8,.2,1);
+}
+
+
+/* =========================================================
+   COVER DEPTH
+========================================================= */
+
+.magazine.cover-mode .right-slot {
+
+    box-shadow:
+
+        4px 0 0 #d8d3c8,
+
+        7px 1px 0 #ede9df,
+
+        10px 2px 0 #c9c4b9,
+
+        15px 5px 22px rgba(0,0,0,.22),
+
+        inset 12px 0 25px rgba(0,0,0,.08);
+}
+
+
+/* =========================================================
+   CLOSED BOOK SHADOW
+========================================================= */
+
+.magazine.cover-mode .book-shadow {
+
+    left: 6%;
+    right: 6%;
+
+    bottom: -32px;
+
+    height: 60px;
+
+    opacity: .85;
+}
+
+
+/* =========================================================
+   OPEN BOOK SHADOW
+========================================================= */
+
+.magazine.open-mode .book-shadow {
+
+    left: 3%;
+    right: 3%;
+
+    height: 78px;
+
+    bottom: -42px;
+}
+
+
+/* =========================================================
+   PAGE TURN — EXTRA PHYSICS
+========================================================= */
+
+.turning-sheet {
+
+    --bend: 0;
+    --fold: 0;
+    --shadow-power: 0;
+
+    perspective: 2600px;
+
+    will-change:
+        transform,
+        filter;
+
+    transition:
+        none;
+}
+
+
+/* =========================================================
+   TRAVELING FOLD
+========================================================= */
+
+.turning-sheet::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    bottom: 0;
+
+    right: -1px;
+
+    width: 32%;
+
+    z-index: 100;
+
+    pointer-events: none;
+
+    opacity:
+        var(--fold);
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            transparent 0%,
+
+            rgba(255,255,255,.05) 18%,
+
+            rgba(255,255,255,.24) 42%,
+
+            rgba(0,0,0,.08) 58%,
+
+            rgba(0,0,0,.30) 78%,
+
+            transparent 100%
+        );
+
+    filter:
+        blur(.35px);
+
+    transform:
+        translateX(
+            calc(
+                -1px *
+                var(--fold-offset, 0)
+            )
+        );
+
+    will-change:
+        opacity,
+        transform;
+}
+
+
+/* =========================================================
+   DEEPER PAGE SHADOW
+========================================================= */
+
+.turning-sheet::after {
+
+    opacity:
+        var(--shadow-power);
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            transparent 0%,
+
+            rgba(0,0,0,.03) 24%,
+
+            rgba(0,0,0,.11) 48%,
+
+            rgba(0,0,0,.32) 76%,
+
+            rgba(0,0,0,.53) 100%
+        );
+}
+
+
+/* =========================================================
+   FRONT PAPER SHADING
+========================================================= */
+
+.turning-sheet.active .turn-front {
+
+    box-shadow:
+
+        inset -14px 0 22px rgba(255,255,255,.10),
+
+        inset -42px 0 45px rgba(0,0,0,.08);
+}
+
+
+/* =========================================================
+   BACK PAPER SHADING
+========================================================= */
+
+.turning-sheet.active .turn-back {
+
+    box-shadow:
+
+        inset 17px 0 26px rgba(0,0,0,.16),
+
+        inset -8px 0 18px rgba(255,255,255,.07);
+}
+
+
+/* =========================================================
+   CAST SHADOW ON BOOK
+========================================================= */
+
+.page-cast-shadow {
+
+    position: absolute;
+
+    width: 50%;
+    height: 100%;
+
+    top: 0;
+    left: 50%;
+
+    z-index: 250;
+
+    pointer-events: none;
+
+    opacity: 0;
+
+    background:
+
+        linear-gradient(
+            90deg,
+
+            rgba(0,0,0,.34),
+
+            rgba(0,0,0,.14) 28%,
+
+            rgba(0,0,0,.04) 58%,
+
+            transparent 100%
+        );
+
+    filter:
+        blur(3px);
+
+    transform-origin:
+        left center;
+
+    will-change:
+        opacity,
+        transform;
+}
+
+
+/* =========================================================
+   OPENING GLOW ON SPINE
+========================================================= */
+
+.magazine.opening .spine {
+
+    opacity: .3;
+
+    transition:
+        opacity .5s ease;
+}
+
+
+.magazine.open-mode .spine {
+
+    opacity: 1;
+
+    transition:
+        opacity .5s ease .15s;
+}
+
+
+/* =========================================================
+   MORE PHYSICAL OPEN BOOK
+========================================================= */
+
+.magazine.open-mode .left-slot {
+
+    transform:
+        perspective(1800px)
+        rotateY(.8deg)
+        rotateX(.3deg);
+}
+
+
+.magazine.open-mode .right-slot {
+
+    transform:
+        perspective(1800px)
+        rotateY(-.8deg)
+        rotateX(.3deg);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 780px) {
+
+    .magazine.cover-mode,
+    .magazine.open-mode {
+
+        width: 100%;
+    }
+
+
+    .magazine.open-mode {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .magazine.open-mode .left-slot {
+
+        display: none;
+    }
+
+
+    .page-cast-shadow {
+
+        width: 100%;
+
+        left: 0;
+    }
+
+}
