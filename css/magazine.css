@@ -1,0 +1,1009 @@
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    background:
+        radial-gradient(
+            circle at center,
+            #242424 0%,
+            #151515 55%,
+            #090909 100%
+        );
+
+    color: #161616;
+
+    overflow: hidden;
+}
+
+
+/* =========================================
+   EXPERIENCE
+========================================= */
+
+.experience {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.topbar {
+    height: 80px;
+
+    padding: 22px 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: rgba(255,255,255,.88);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    letter-spacing: .12em;
+
+    z-index: 10;
+}
+
+
+.brand {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+
+.brand span {
+    margin-left: 12px;
+
+    font-weight: 400;
+    font-size: 10px;
+
+    opacity: .55;
+}
+
+
+.edition {
+    font-size: 10px;
+    opacity: .5;
+}
+
+
+/* =========================================
+   READER
+========================================= */
+
+.reader {
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    perspective: 2600px;
+}
+
+
+/* =========================================
+   BOOK SCENE
+========================================= */
+
+.book-scene {
+    width: min(84vw, 1120px);
+    height: min(72vh, 720px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    perspective: 3000px;
+}
+
+
+.book {
+    width: 50%;
+    height: 100%;
+
+    position: relative;
+
+    transform-style: preserve-3d;
+
+    transform:
+        rotateX(2deg)
+        rotateY(-2deg);
+
+    transition:
+        transform 700ms cubic-bezier(.2,.75,.2,1);
+
+    filter:
+        drop-shadow(0 32px 30px rgba(0,0,0,.45));
+}
+
+
+/* =========================================
+   SHEETS
+========================================= */
+
+.sheet {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    top: 0;
+    left: 0;
+
+    transform-origin: left center;
+
+    transform-style: preserve-3d;
+
+    transition:
+        transform 1.15s
+        cubic-bezier(.22,.72,.18,1);
+
+    will-change: transform;
+}
+
+
+.sheet.flipped {
+    transform: rotateY(-180deg);
+}
+
+
+.sheet-1 {
+    z-index: 30;
+}
+
+.sheet-2 {
+    z-index: 20;
+}
+
+.sheet-3 {
+    z-index: 10;
+}
+
+
+.sheet.flipped {
+    z-index: 1;
+}
+
+
+/* =========================================
+   PAGE BASE
+========================================= */
+
+.page {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    top: 0;
+    left: 0;
+
+    overflow: hidden;
+
+    background: #f2eee4;
+
+    backface-visibility: hidden;
+
+    -webkit-backface-visibility: hidden;
+
+    box-shadow:
+        inset 0 0 45px rgba(30,20,10,.08);
+}
+
+
+.page-front {
+    transform: rotateY(0deg);
+}
+
+
+.page-back {
+    transform: rotateY(180deg);
+}
+
+
+/* =========================================
+   PAPER EDGE
+========================================= */
+
+.sheet::after {
+    content: "";
+
+    position: absolute;
+
+    width: 6px;
+    height: calc(100% - 6px);
+
+    right: -5px;
+    top: 3px;
+
+    background:
+        repeating-linear-gradient(
+            to right,
+            #dad6cc 0px,
+            #f5f2ea 1px,
+            #cfcac0 2px
+        );
+
+    opacity: .65;
+
+    z-index: -1;
+}
+
+
+/* =========================================
+   PAGE SHADING
+========================================= */
+
+.page::before {
+    content: "";
+
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    top: 0;
+    left: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0,0,0,.11),
+            transparent 12%,
+            transparent 88%,
+            rgba(0,0,0,.05)
+        );
+
+    z-index: 50;
+
+    opacity: .55;
+}
+
+
+/* =========================================
+   COVER
+========================================= */
+
+.cover {
+    color: white;
+
+    background: #093b2d;
+}
+
+
+.cover-image {
+    position: absolute;
+    inset: 0;
+
+    background:
+        radial-gradient(
+            circle at 65% 30%,
+            rgba(255,211,101,.5),
+            transparent 26%
+        ),
+        linear-gradient(
+            135deg,
+            #0b4c3a,
+            #06291f 62%,
+            #021713
+        );
+
+    transform: scale(1.04);
+}
+
+
+.cover-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,.05),
+            rgba(0,0,0,.58)
+        );
+}
+
+
+.cover-content {
+    position: absolute;
+    inset: 0;
+
+    padding:
+        clamp(32px, 6vw, 70px);
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: flex-end;
+
+    z-index: 2;
+}
+
+
+.cover-kicker {
+    font-family: Arial, sans-serif;
+
+    letter-spacing: .22em;
+
+    font-size: 10px;
+
+    opacity: .8;
+
+    margin-bottom: 16px;
+}
+
+
+.cover h1 {
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+
+    font-size:
+        clamp(52px, 7vw, 96px);
+
+    letter-spacing: -.065em;
+
+    line-height: .9;
+}
+
+
+.cover-line {
+    width: 80px;
+    height: 3px;
+
+    background: #ffd365;
+
+    margin: 24px 0;
+}
+
+
+.cover h2 {
+    margin: 0;
+
+    font-size:
+        clamp(23px, 3vw, 40px);
+
+    font-weight: 400;
+}
+
+
+.cover p {
+    margin-top: 14px;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 11px;
+
+    letter-spacing: .12em;
+
+    opacity: .7;
+}
+
+
+.cover-bottom {
+    margin-top: 34px;
+
+    display: flex;
+    justify-content: space-between;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 10px;
+
+    letter-spacing: .15em;
+}
+
+
+/* =========================================
+   COMMON TYPOGRAPHY
+========================================= */
+
+.eyebrow {
+    display: inline-block;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: .22em;
+
+    color: #0a6a4c;
+
+    margin-bottom: 18px;
+}
+
+
+.eyebrow.light {
+    color: #ffd365;
+}
+
+
+.page-number {
+    position: absolute;
+
+    right: 28px;
+    bottom: 22px;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 9px;
+
+    letter-spacing: .1em;
+
+    opacity: .45;
+}
+
+
+.light-number {
+    color: white;
+}
+
+
+/* =========================================
+   INTRO
+========================================= */
+
+.intro-page {
+    padding: 68px;
+}
+
+
+.intro-content {
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+
+.intro-content h2 {
+    margin: 0 0 28px;
+
+    font-size:
+        clamp(38px, 5vw, 67px);
+
+    line-height: .96;
+
+    font-weight: 400;
+}
+
+
+.intro-content p {
+    max-width: 390px;
+
+    font-size: 15px;
+    line-height: 1.75;
+
+    color: #4b463f;
+}
+
+
+/* =========================================
+   FEATURE
+========================================= */
+
+.feature-page {
+    background: #17231d;
+
+    color: white;
+}
+
+
+.feature-image {
+    position: absolute;
+    inset: 0;
+}
+
+
+.oaxaca-image {
+    background:
+        radial-gradient(
+            circle at 70% 30%,
+            #c49a57,
+            transparent 28%
+        ),
+        linear-gradient(
+            145deg,
+            #86663c,
+            #3f3f23 45%,
+            #13221a
+        );
+}
+
+
+.feature-gradient {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to top,
+            rgba(0,0,0,.83),
+            transparent 65%
+        );
+}
+
+
+.feature-copy {
+    position: absolute;
+
+    left: 56px;
+    right: 56px;
+    bottom: 70px;
+
+    z-index: 2;
+}
+
+
+.feature-copy h2 {
+    font-size:
+        clamp(55px, 7vw, 92px);
+
+    margin: 0;
+
+    line-height: .9;
+
+    font-weight: 400;
+}
+
+
+.feature-copy h3 {
+    margin: 16px 0;
+
+    font-size: 24px;
+
+    font-weight: 400;
+}
+
+
+.feature-copy p {
+    max-width: 390px;
+
+    font-family: Arial, sans-serif;
+
+    line-height: 1.6;
+
+    opacity: .78;
+}
+
+
+/* =========================================
+   EDITORIAL
+========================================= */
+
+.editorial-page {
+    padding: 64px;
+}
+
+
+.editorial-grid {
+    height: 100%;
+
+    display: grid;
+
+    grid-template-rows:
+        .8fr
+        1.2fr;
+}
+
+
+.editorial-grid h2 {
+    max-width: 390px;
+
+    font-size:
+        clamp(34px, 4vw, 54px);
+
+    line-height: 1.02;
+
+    font-weight: 400;
+
+    margin: 0;
+}
+
+
+.editorial-text {
+    align-self: center;
+
+    max-width: 390px;
+}
+
+
+.editorial-text p {
+    line-height: 1.7;
+
+    color: #554f46;
+
+    font-size: 14px;
+}
+
+
+.dropcap::first-letter {
+    font-size: 64px;
+
+    float: left;
+
+    margin-right: 8px;
+
+    line-height: .8;
+
+    color: #0a6a4c;
+}
+
+
+/* =========================================
+   GASTRONOMY
+========================================= */
+
+.gastronomy-page {
+    display: grid;
+
+    grid-template-columns:
+        1.15fr
+        .85fr;
+
+    padding: 60px;
+}
+
+
+.gastronomy-copy {
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+}
+
+
+.gastronomy-copy h2 {
+    max-width: 400px;
+
+    margin: 0 0 24px;
+
+    font-size:
+        clamp(38px, 5vw, 60px);
+
+    line-height: .95;
+
+    font-weight: 400;
+}
+
+
+.gastronomy-copy p {
+    max-width: 350px;
+
+    line-height: 1.7;
+
+    color: #554f46;
+}
+
+
+.food-index {
+    margin-top: 34px;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+}
+
+
+.food-index span {
+    font-family: Arial, sans-serif;
+
+    font-size: 8px;
+
+    letter-spacing: .15em;
+
+    border: 1px solid #aaa397;
+
+    padding: 8px 10px;
+}
+
+
+.food-visual {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+
+.food-circle {
+    width: min(19vw, 190px);
+    aspect-ratio: 1;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 30% 30%,
+            #d8a23d,
+            #7f461c 55%,
+            #351a0a
+        );
+
+    color: rgba(255,255,255,.85);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-family: Arial, sans-serif;
+
+    font-size: 9px;
+
+    letter-spacing: .2em;
+
+    box-shadow:
+        0 30px 40px rgba(50,30,10,.32);
+}
+
+
+/* =========================================
+   FINAL
+========================================= */
+
+.final-page {
+    padding: 64px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #063e2f,
+            #021814
+        );
+
+    color: white;
+}
+
+
+.final-page h2 {
+    margin: 0;
+
+    font-size:
+        clamp(50px, 7vw, 90px);
+
+    line-height: .88;
+
+    font-weight: 400;
+}
+
+
+.final-page p {
+    margin-top: 30px;
+
+    font-family: Arial, sans-serif;
+
+    opacity: .6;
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+.nav-button {
+    width: 54px;
+    height: 54px;
+
+    position: absolute;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border: 1px solid rgba(255,255,255,.14);
+
+    border-radius: 50%;
+
+    background: rgba(0,0,0,.18);
+
+    color: white;
+
+    font-size: 30px;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(12px);
+
+    z-index: 40;
+
+    transition:
+        background .3s ease,
+        transform .3s ease;
+}
+
+
+.nav-button:hover {
+    background: rgba(255,255,255,.12);
+
+    transform:
+        translateY(-50%)
+        scale(1.08);
+}
+
+
+.nav-prev {
+    left: 28px;
+}
+
+
+.nav-next {
+    right: 28px;
+}
+
+
+/* =========================================
+   CONTROLS
+========================================= */
+
+.reader-controls {
+    height: 72px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 34px;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+}
+
+
+.reader-controls button {
+    border: 0;
+
+    color: rgba(255,255,255,.65);
+
+    background: transparent;
+
+    font-size: 9px;
+
+    letter-spacing: .16em;
+
+    cursor: pointer;
+}
+
+
+.page-indicator {
+    font-size: 10px;
+
+    letter-spacing: .14em;
+
+    color: rgba(255,255,255,.75);
+}
+
+
+.separator {
+    opacity: .25;
+
+    padding: 0 7px;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 720px) {
+
+    .topbar {
+        padding: 18px 20px;
+
+        height: 60px;
+    }
+
+
+    .brand span {
+        display: none;
+    }
+
+
+    .book-scene {
+        width: 82vw;
+        height: 68vh;
+    }
+
+
+    .book {
+        width: 100%;
+    }
+
+
+    .nav-button {
+        width: 42px;
+        height: 42px;
+
+        font-size: 24px;
+
+        background:
+            rgba(0,0,0,.4);
+    }
+
+
+    .nav-prev {
+        left: 10px;
+    }
+
+
+    .nav-next {
+        right: 10px;
+    }
+
+
+    .intro-page,
+    .editorial-page,
+    .final-page,
+    .gastronomy-page {
+        padding: 36px;
+    }
+
+
+    .gastronomy-page {
+        grid-template-columns: 1fr;
+    }
+
+
+    .food-visual {
+        display: none;
+    }
+
+
+    .feature-copy {
+        left: 34px;
+        right: 34px;
+        bottom: 48px;
+    }
+
+}
