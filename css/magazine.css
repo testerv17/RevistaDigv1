@@ -1,4 +1,10 @@
 /* =========================================================
+   MÉXICO — REVISTA DIGITAL
+   VISUAL SYSTEM v0.6
+========================================================= */
+
+
+/* =========================================================
    RESET
 ========================================================= */
 
@@ -14,23 +20,28 @@ body {
     margin: 0;
 }
 
+html {
+    background: #080808;
+}
+
 body {
     overflow: hidden;
-
-    background:
-        radial-gradient(
-            circle at center,
-            #1c1c1c 0%,
-            #101010 58%,
-            #070707 100%
-        );
-
-    color: #171717;
 
     font-family:
         Georgia,
         "Times New Roman",
         serif;
+
+    color: #171717;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 44%,
+            #202020 0%,
+            #121212 46%,
+            #090909 72%,
+            #050505 100%
+        );
 }
 
 
@@ -44,6 +55,8 @@ body {
 
     display: flex;
     flex-direction: column;
+
+    overflow: hidden;
 }
 
 
@@ -52,13 +65,16 @@ body {
 ========================================================= */
 
 .topbar {
-    height: 68px;
+    height: 64px;
+
+    flex: 0 0 64px;
+
+    padding:
+        0 28px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    padding: 0 34px;
 
     color: white;
 
@@ -68,31 +84,39 @@ body {
         sans-serif;
 
     letter-spacing: .14em;
+
+    z-index: 1000;
 }
 
 
 .brand {
     font-size: 15px;
 
-    font-weight: 700;
+    font-weight: 800;
+
+    letter-spacing: .16em;
 }
 
 
 .brand span {
-    margin-left: 14px;
+    margin-left: 13px;
 
-    font-size: 9px;
+    font-size: 8px;
 
     font-weight: 400;
 
-    opacity: .48;
+    letter-spacing: .18em;
+
+    opacity: .45;
 }
 
 
 .edition {
-    font-size: 9px;
+    font-size: 8px;
 
     opacity: .45;
+
+    letter-spacing: .18em;
 }
 
 
@@ -103,25 +127,7 @@ body {
 .reader {
     flex: 1;
 
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    position: relative;
-
-    perspective: 2600px;
-}
-
-
-/* =========================================================
-   STAGE
-========================================================= */
-
-.stage {
-    width: min(82vw, 1180px);
-
-    height: min(70vh, 720px);
+    min-height: 0;
 
     position: relative;
 
@@ -135,75 +141,88 @@ body {
 
 
 /* =========================================================
-   MAGAZINE
+   STAGE
 ========================================================= */
 
-.magazine {
-    width: 100%;
-    height: 100%;
-
+.stage {
     position: relative;
 
-    display: grid;
+    width:
+        min(
+            86vw,
+            1180px
+        );
 
-    grid-template-columns:
-        1fr
-        1fr;
+    height:
+        min(
+            72vh,
+            720px
+        );
 
-    transform-style: preserve-3d;
+    display: flex;
 
-    transform:
-        rotateX(1.8deg);
+    align-items: center;
+    justify-content: center;
 
-    transition:
-        transform .5s ease;
+    perspective: 3000px;
+}
+
+
+/* =========================================================
+   FLIP BOOK
+========================================================= */
+
+.flip-book {
+    position: relative;
+
+    margin: 0 auto;
 
     filter:
         drop-shadow(
-            0 32px 32px
-            rgba(0,0,0,.4)
+            0 28px 30px
+            rgba(0,0,0,.42)
         );
 }
 
 
+/*
+ * StPageFlip crea wrappers internos.
+ * Evitamos outlines/artefactos.
+ */
+
+.stf__parent,
+.stf__wrapper,
+.stf__block {
+    outline: none !important;
+}
+
+
+.stf__wrapper {
+    box-shadow:
+        0 26px 42px
+        rgba(0,0,0,.28);
+}
+
+
 /* =========================================================
-   BOOK SHADOW
+   PAGE
 ========================================================= */
 
-.book-shadow {
-    position: absolute;
-
-    left: 5%;
-    right: 5%;
-
-    height: 75px;
-
-    bottom: -38px;
-
-    z-index: -5;
-
+.page {
     background:
+        #f2eee5;
 
-        radial-gradient(
-            ellipse at center,
+    overflow: hidden;
 
-            rgba(0,0,0,.55),
+    border: 0;
 
-            rgba(0,0,0,.25) 45%,
-
-            transparent 75%
-        );
-
-    filter:
-        blur(15px);
+    box-shadow:
+        inset 0 0 30px
+        rgba(40,30,20,.035);
 }
 
 
-/* =========================================================
-   PAGE SLOTS
-========================================================= */
-
-.page-slot {
+.page-inner {
     position: relative;
 
     width: 100%;
@@ -212,46 +231,7 @@ body {
     overflow: hidden;
 
     background:
-        #f3f0e8;
-
-    transform-style:
-        preserve-3d;
-}
-
-
-/* =========================================================
-   LEFT PAGE
-========================================================= */
-
-.left-slot {
-    transform-origin:
-        right center;
-
-    box-shadow:
-
-        inset -18px 0 28px
-        rgba(0,0,0,.09),
-
-        inset 2px 0 4px
-        rgba(255,255,255,.5);
-}
-
-
-/* =========================================================
-   RIGHT PAGE
-========================================================= */
-
-.right-slot {
-    transform-origin:
-        left center;
-
-    box-shadow:
-
-        inset 18px 0 28px
-        rgba(0,0,0,.09),
-
-        inset -2px 0 4px
-        rgba(255,255,255,.45);
+        #f2eee5;
 }
 
 
@@ -259,26 +239,27 @@ body {
    PAPER TEXTURE
 ========================================================= */
 
-.page-slot::after {
-
+.page-inner::after {
     content: "";
 
     position: absolute;
 
     inset: 0;
 
+    z-index: 100;
+
     pointer-events: none;
 
-    z-index: 50;
+    opacity: .85;
 
     background:
 
         repeating-linear-gradient(
             0deg,
 
-            rgba(40,30,20,.009) 0px,
+            rgba(60,40,20,.009) 0px,
 
-            rgba(40,30,20,.009) 1px,
+            rgba(60,40,20,.009) 1px,
 
             transparent 1px,
 
@@ -288,182 +269,92 @@ body {
 
 
 /* =========================================================
-   SPINE
+   GENERIC PAGE EDGE
 ========================================================= */
 
-.spine {
-    position: absolute;
-
-    width: 32px;
-
-    top: -2px;
-    bottom: -2px;
-
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    z-index: 100;
-
-    pointer-events: none;
-}
-
-
-.spine-shadow {
-    position: absolute;
-
-    inset: 0;
-
-    background:
-
-        radial-gradient(
-            ellipse at center,
-
-            rgba(0,0,0,.36),
-
-            rgba(0,0,0,.16) 38%,
-
-            transparent 74%
-        );
-
-    filter:
-        blur(3px);
-}
-
-
-.spine-light {
-    position: absolute;
-
-    width: 3px;
-
-    top: 0;
-    bottom: 0;
-
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    background:
-
-        rgba(255,255,255,.14);
-
-    opacity: .5;
-}
-
-
-/* =========================================================
-   TURNING SHEET
-========================================================= */
-
-.turning-sheet {
-    position: absolute;
-
-    width: 50%;
-    height: 100%;
-
-    top: 0;
-    left: 50%;
-
-    z-index: 300;
-
-    transform-origin:
-        left center;
-
-    transform-style:
-        preserve-3d;
-
-    pointer-events: none;
-
-    opacity: 0;
-
-    will-change:
-        transform;
-}
-
-
-.turning-sheet.active {
-    opacity: 1;
-}
-
-
-/* =========================================================
-   TURN PAGE
-========================================================= */
-
-.turn-page {
-    position: absolute;
-
-    inset: 0;
-
-    overflow: hidden;
-
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-
-    background:
-        #f3f0e8;
-}
-
-
-.turn-front {
-    transform:
-        rotateY(0deg);
-}
-
-
-.turn-back {
-    transform:
-        rotateY(180deg);
-}
-
-
-/* =========================================================
-   TURNING LIGHT
-========================================================= */
-
-.turning-sheet::after {
+.page-inner::before {
     content: "";
 
     position: absolute;
 
     inset: 0;
 
-    z-index: 80;
+    z-index: 90;
 
     pointer-events: none;
-
-    opacity:
-        var(--turn-shadow, 0);
 
     background:
 
         linear-gradient(
             90deg,
 
-            transparent,
+            rgba(0,0,0,.035),
 
-            rgba(0,0,0,.06) 40%,
+            transparent 8%,
 
-            rgba(0,0,0,.25) 75%,
+            transparent 92%,
 
-            rgba(0,0,0,.45)
+            rgba(0,0,0,.025)
         );
 }
 
 
 /* =========================================================
-   PAGE CONTENT BASE
+   TYPOGRAPHY
 ========================================================= */
 
-.page-content {
-    position: relative;
+.eyebrow {
+    display: inline-block;
 
-    width: 100%;
-    height: 100%;
+    color: #0b7659;
 
-    overflow: hidden;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: .25em;
+
+    text-transform: uppercase;
+}
+
+
+.eyebrow.light {
+    color: #ffd365;
+}
+
+
+.page-number {
+    position: absolute;
+
+    right: 25px;
+    bottom: 19px;
+
+    z-index: 120;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 7px;
+
+    font-weight: 700;
+
+    letter-spacing: .12em;
+
+    opacity: .32;
+}
+
+
+.page-number.light {
+    color: white;
+
+    opacity: .65;
 }
 
 
@@ -471,43 +362,84 @@ body {
    COVER
 ========================================================= */
 
-.page-cover {
+.cover-page {
+    color: white;
+
     background:
 
         radial-gradient(
-            circle at 32% 30%,
-            rgba(255,211,101,.55),
-            transparent 26%
+            circle at 37% 29%,
+            rgba(255,211,101,.58),
+            transparent 25%
         ),
 
         linear-gradient(
-            150deg,
-            #315840,
-            #193226 60%,
-            #081410
+            145deg,
+            #315943 0%,
+            #193c2e 47%,
+            #0a261d 78%,
+            #04130f 100%
+        );
+}
+
+
+.cover-page::before {
+
+    background:
+
+        linear-gradient(
+            to top,
+
+            rgba(0,0,0,.42),
+
+            transparent 55%
+        );
+}
+
+
+.cover-light {
+    position: absolute;
+
+    width: 360px;
+    height: 360px;
+
+    left: 16%;
+    top: 6%;
+
+    border-radius: 50%;
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(255,208,96,.32),
+            transparent 66%
         );
 
-    color: white;
+    filter:
+        blur(10px);
+
+    opacity: .72;
 }
 
 
 .cover-copy {
     position: absolute;
 
-    inset: 0;
+    left: 10%;
+    right: 10%;
 
-    padding: 58px;
+    bottom: 10%;
 
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: flex-end;
+    z-index: 20;
 }
 
 
 .cover-copy h1 {
-    margin: 0;
+    margin:
+        12px
+        0
+        0;
 
     font-family:
         Arial,
@@ -515,59 +447,61 @@ body {
         sans-serif;
 
     font-size:
-        clamp(56px, 6vw, 90px);
+        clamp(
+            54px,
+            6vw,
+            92px
+        );
 
-    letter-spacing: -.07em;
+    line-height: .86;
 
-    line-height: .88;
+    font-weight: 900;
+
+    letter-spacing: -.065em;
+}
+
+
+.accent-line {
+    width: 68px;
+    height: 3px;
+
+    margin:
+        24px
+        0
+        20px;
+
+    background:
+        #ffd365;
 }
 
 
 .cover-copy h2 {
-    margin: 22px 0 0;
+    margin: 0;
 
     font-size:
-        clamp(24px, 3vw, 38px);
+        clamp(
+            25px,
+            2.7vw,
+            40px
+        );
 
     font-weight: 400;
+
+    line-height: 1;
 }
 
 
 .cover-copy p {
-    margin: 16px 0 0;
+    max-width: 430px;
 
-    max-width: 390px;
+    margin:
+        17px
+        0
+        0;
 
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
+    color:
+        rgba(255,255,255,.66);
 
-    font-size: 10px;
-
-    line-height: 1.7;
-
-    letter-spacing: .12em;
-
-    opacity: .68;
-}
-
-
-/* =========================================================
-   EDITORIAL PAGE
-========================================================= */
-
-.page-editorial {
-
-    padding:
-        clamp(38px, 5vw, 64px);
-
-    background:
-        #f2eee5;
-}
-
-
-.eyebrow {
     font-family:
         Arial,
         Helvetica,
@@ -575,35 +509,82 @@ body {
 
     font-size: 9px;
 
-    font-weight: 700;
+    line-height: 1.7;
 
-    letter-spacing: .22em;
-
-    color: #0a7657;
+    letter-spacing: .08em;
 }
 
 
-.page-editorial h2 {
+/* =========================================================
+   EDITORIAL
+========================================================= */
+
+.editorial-page {
+    padding:
+        clamp(
+            42px,
+            5vw,
+            68px
+        );
+
+    background:
+        #f3efe7;
+}
+
+
+.editorial-page h2 {
+    max-width: 470px;
+
     margin:
-        18px 0 26px;
+        20px
+        0
+        30px;
 
     font-size:
-        clamp(38px, 4vw, 62px);
-
-    line-height: .98;
+        clamp(
+            40px,
+            4.8vw,
+            68px
+        );
 
     font-weight: 400;
+
+    line-height: .95;
+
+    letter-spacing: -.025em;
 }
 
 
-.page-editorial p {
+.editorial-page p {
     max-width: 420px;
 
-    font-size: 15px;
-
-    line-height: 1.75;
+    margin:
+        0
+        0
+        13px;
 
     color: #514b43;
+
+    font-size:
+        clamp(
+            13px,
+            1.2vw,
+            16px
+        );
+
+    line-height: 1.7;
+}
+
+
+.editorial-page .lead {
+    color: #29251f;
+
+    font-size:
+        clamp(
+            14px,
+            1.3vw,
+            17px
+        );
 }
 
 
@@ -611,28 +592,66 @@ body {
    DESTINATION
 ========================================================= */
 
-.page-destination {
-
+.destination-page {
     color: white;
+
+    background:
+        #172319;
+}
+
+
+.destination-bg {
+    position: absolute;
+
+    inset: 0;
 
     background:
 
         radial-gradient(
-            circle at 35% 30%,
-            #b28b4f,
-            transparent 23%
+            circle at 32% 25%,
+            #ba9557 0%,
+            #696039 24%,
+            transparent 48%
         ),
 
         linear-gradient(
             145deg,
-            #69572f,
-            #314029 52%,
-            #101a15
+            #64603b,
+            #32432d 48%,
+            #14261b 75%,
+            #07110d
         );
+
+    transform:
+        scale(1.04);
 }
 
 
-.destination-overlay {
+.destination-glow {
+    position: absolute;
+
+    width: 360px;
+    height: 360px;
+
+    top: 2%;
+    left: 8%;
+
+    border-radius: 50%;
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(255,207,95,.35),
+            transparent 67%
+        );
+
+    filter:
+        blur(15px);
+}
+
+
+.destination-gradient {
     position: absolute;
 
     inset: 0;
@@ -642,9 +661,11 @@ body {
         linear-gradient(
             to top,
 
-            rgba(0,0,0,.78),
+            rgba(0,0,0,.85) 0%,
 
-            transparent 64%
+            rgba(0,0,0,.34) 38%,
+
+            transparent 70%
         );
 }
 
@@ -652,54 +673,114 @@ body {
 .destination-copy {
     position: absolute;
 
-    left: 56px;
-    right: 56px;
-    bottom: 58px;
+    left: 10%;
+    right: 10%;
 
-    z-index: 3;
+    bottom: 12%;
+
+    z-index: 20;
 }
 
 
 .destination-copy h2 {
-    margin: 0;
+    margin:
+        9px
+        0
+        16px;
 
     font-size:
-        clamp(54px, 6vw, 88px);
-
-    line-height: .9;
+        clamp(
+            57px,
+            6vw,
+            90px
+        );
 
     font-weight: 400;
+
+    line-height: .88;
 }
 
 
 .destination-copy h3 {
-    font-size: 22px;
+    margin:
+        0
+        0
+        17px;
+
+    font-size:
+        clamp(
+            20px,
+            2vw,
+            28px
+        );
 
     font-weight: 400;
 }
 
 
-/* =========================================================
-   GASTRONOMY
-========================================================= */
+.destination-copy p {
+    max-width: 430px;
 
-.page-food {
-    padding:
-        clamp(38px, 5vw, 60px);
+    margin: 0;
 
-    background:
-        #f4f0e7;
+    color:
+        rgba(255,255,255,.78);
+
+    font-size:
+        clamp(
+            12px,
+            1.1vw,
+            15px
+        );
+
+    line-height: 1.65;
 }
 
 
-.page-food h2 {
-    margin:
-        18px 0 25px;
+/* =========================================================
+   FOOD
+========================================================= */
 
-    max-width: 480px;
+.food-page {
+    display: grid;
+
+    grid-template-columns:
+        1.15fr
+        .85fr;
+
+    gap: 20px;
+
+    padding:
+        clamp(
+            40px,
+            5vw,
+            64px
+        );
+
+    background:
+        #f3efe5;
+}
+
+
+.food-copy {
+    align-self: center;
+}
+
+
+.food-copy h2 {
+    max-width: 470px;
+
+    margin:
+        19px
+        0
+        25px;
 
     font-size:
-        clamp(42px, 5vw, 68px);
+        clamp(
+            42px,
+            5vw,
+            70px
+        );
 
     line-height: .92;
 
@@ -707,13 +788,279 @@ body {
 }
 
 
+.food-copy p {
+    max-width: 390px;
+
+    color: #5a5248;
+
+    font-size:
+        clamp(
+            13px,
+            1.15vw,
+            15px
+        );
+
+    line-height: 1.7;
+}
+
+
+.food-tags {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 7px;
+
+    margin-top: 30px;
+}
+
+
+.food-tags span {
+    padding:
+        7px
+        10px;
+
+    border:
+        1px solid
+        #b7afa2;
+
+    color: #655e54;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 7px;
+
+    letter-spacing: .14em;
+}
+
+
+.food-art {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+
 .food-circle {
-    width: 170px;
+    width:
+        clamp(
+            130px,
+            15vw,
+            190px
+        );
+
     aspect-ratio: 1;
 
-    margin-top: 35px;
-
     border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    letter-spacing: .14em;
+
+    background:
+
+        radial-gradient(
+            circle at 37% 28%,
+            #e9b546,
+            #ad6827 47%,
+            #743817 74%,
+            #3e1b0b
+        );
+
+    box-shadow:
+
+        0 24px 40px
+        rgba(70,35,10,.32);
+}
+
+
+/* =========================================================
+   ANCESTRAL
+========================================================= */
+
+.ancestral-page {
+    color: white;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #5a3e29 0%,
+            #3b2c22 42%,
+            #1b211a 74%,
+            #09110c 100%
+        );
+}
+
+
+.ancestral-pattern {
+    position: absolute;
+
+    inset: 0;
+
+    opacity: .15;
+
+    background:
+
+        repeating-linear-gradient(
+            45deg,
+
+            rgba(255,255,255,.18) 0px,
+
+            rgba(255,255,255,.18) 1px,
+
+            transparent 1px,
+
+            transparent 18px
+        );
+}
+
+
+.ancestral-copy {
+    position: absolute;
+
+    left: 10%;
+    right: 10%;
+
+    bottom: 13%;
+
+    z-index: 20;
+}
+
+
+.ancestral-copy h2 {
+    margin:
+        16px
+        0
+        24px;
+
+    font-size:
+        clamp(
+            50px,
+            6vw,
+            82px
+        );
+
+    line-height: .9;
+
+    font-weight: 400;
+}
+
+
+.ancestral-copy p {
+    max-width: 430px;
+
+    color:
+        rgba(255,255,255,.72);
+
+    font-size:
+        clamp(
+            13px,
+            1.15vw,
+            15px
+        );
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   FINAL
+========================================================= */
+
+.final-page {
+    padding:
+        clamp(
+            48px,
+            6vw,
+            76px
+        );
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    color: white;
+
+    background:
+
+        radial-gradient(
+            circle at 70% 25%,
+            rgba(0,200,151,.19),
+            transparent 35%
+        ),
+
+        linear-gradient(
+            145deg,
+            #084d38,
+            #063326 50%,
+            #031a14
+        );
+}
+
+
+.final-page h2 {
+    margin:
+        18px
+        0
+        27px;
+
+    font-size:
+        clamp(
+            52px,
+            6vw,
+            88px
+        );
+
+    font-weight: 400;
+
+    line-height: .88;
+}
+
+
+.final-page p {
+    max-width: 360px;
+
+    color:
+        rgba(255,255,255,.68);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 11px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   BACK COVER
+========================================================= */
+
+.back-cover {
+    color: white;
 
     display: flex;
 
@@ -723,109 +1070,69 @@ body {
     background:
 
         radial-gradient(
-            circle at 35% 30%,
-            #dfaa42,
-            #9b551f 52%,
-            #633016
+            circle at center,
+            #174331,
+            #0c281e 55%,
+            #04120e
         );
+}
 
-    color: white;
+
+.back-cover-content {
+    text-align: center;
 
     font-family:
         Arial,
         Helvetica,
         sans-serif;
+}
+
+
+.back-cover-content span {
+    font-size:
+        clamp(
+            36px,
+            5vw,
+            64px
+        );
+
+    font-weight: 900;
+
+    letter-spacing: -.045em;
+}
+
+
+.back-cover-content p {
+    margin:
+        12px
+        0;
 
     font-size: 9px;
 
-    letter-spacing: .14em;
+    letter-spacing: .18em;
 
-    box-shadow:
-        0 20px 34px
-        rgba(80,40,10,.28);
+    opacity: .55;
 }
 
 
-/* =========================================================
-   FINAL PAGE
-========================================================= */
+.back-line {
+    width: 45px;
+    height: 2px;
 
-.page-final {
-    padding: 60px;
+    margin:
+        22px
+        auto;
 
-    color: white;
-
-    background:
-
-        linear-gradient(
-            145deg,
-            #094531,
-            #021711
-        );
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: center;
+    background: #ffd365;
 }
 
 
-.page-final h2 {
-    margin: 0;
+.back-cover-content small {
+    font-size: 7px;
 
-    font-size:
-        clamp(52px, 6vw, 88px);
+    letter-spacing: .22em;
 
-    line-height: .88;
-
-    font-weight: 400;
-}
-
-
-/* =========================================================
-   EMPTY PAGE
-========================================================= */
-
-.page-empty {
-    background:
-        linear-gradient(
-            135deg,
-            #e9e5dc,
-            #f6f3eb
-        );
-}
-
-
-/* =========================================================
-   PAGE NUMBER
-========================================================= */
-
-.page-number {
-    position: absolute;
-
-    right: 26px;
-    bottom: 20px;
-
-    z-index: 10;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    font-size: 8px;
-
-    letter-spacing: .15em;
-
-    opacity: .38;
-}
-
-
-.page-number.light {
-    color: white;
-
-    opacity: .62;
+    opacity: .45;
 }
 
 
@@ -841,32 +1148,43 @@ body {
     transform:
         translateY(-50%);
 
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
 
     border-radius: 50%;
 
     border:
         1px solid
-        rgba(255,255,255,.15);
+        rgba(255,255,255,.13);
 
     background:
-        rgba(0,0,0,.18);
+        rgba(7,7,7,.34);
 
     color: white;
 
-    font-size: 28px;
+    font-size: 29px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
     cursor: pointer;
 
-    z-index: 500;
+    z-index: 1000;
 
     backdrop-filter:
         blur(10px);
 
     transition:
         transform .25s ease,
-        background .25s ease;
+        background .25s ease,
+        border-color .25s ease;
 }
 
 
@@ -876,17 +1194,20 @@ body {
         scale(1.08);
 
     background:
-        rgba(255,255,255,.1);
+        rgba(255,255,255,.08);
+
+    border-color:
+        rgba(255,255,255,.24);
 }
 
 
 .prev {
-    left: 20px;
+    left: 12px;
 }
 
 
 .next {
-    right: 20px;
+    right: 12px;
 }
 
 
@@ -895,14 +1216,16 @@ body {
 ========================================================= */
 
 .controls {
-    height: 68px;
+    height: 64px;
+
+    flex: 0 0 64px;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    gap: 32px;
+    gap: 30px;
 
     color: white;
 
@@ -914,35 +1237,66 @@ body {
 
 
 .controls button {
+    padding: 5px;
+
     border: 0;
 
-    background:
-        transparent;
+    background: transparent;
 
     color:
-        rgba(255,255,255,.62);
+        rgba(255,255,255,.65);
 
-    font-size: 9px;
+    font-size: 8px;
 
-    letter-spacing: .15em;
+    letter-spacing: .18em;
 
     cursor: pointer;
+
+    transition:
+        color .2s ease;
+}
+
+
+.controls button:hover {
+    color: white;
 }
 
 
 .counter {
-    font-size: 9px;
+    color:
+        rgba(255,255,255,.8);
 
-    letter-spacing: .15em;
+    font-size: 8px;
 
-    opacity: .8;
+    letter-spacing: .18em;
 }
 
 
 .slash {
-    padding: 0 7px;
+    padding:
+        0
+        8px;
 
     opacity: .25;
+}
+
+
+/* =========================================================
+   STPAGEFLIP SHADOW ENHANCEMENT
+========================================================= */
+
+/*
+ * El motor ya dibuja su propia sombra.
+ * Aquí sólo damos presencia al libro
+ * sobre el escenario.
+ */
+
+.stf__parent {
+    filter:
+        drop-shadow(
+            0 30px 32px
+            rgba(0,0,0,.28)
+        );
 }
 
 
@@ -950,13 +1304,27 @@ body {
    RESPONSIVE
 ========================================================= */
 
-@media (max-width: 780px) {
+@media (max-width: 900px) {
+
+    .stage {
+        width: 90vw;
+
+        height: 70vh;
+    }
+
+}
+
+
+@media (max-width: 720px) {
 
     .topbar {
-        height: 58px;
+        height: 56px;
+
+        flex-basis: 56px;
 
         padding:
-            0 18px;
+            0
+            16px;
     }
 
 
@@ -966,835 +1334,61 @@ body {
 
 
     .stage {
-        width: 92vw;
+        width: 88vw;
 
-        height: 68vh;
+        height: 72vh;
     }
 
 
-    .magazine {
-        grid-template-columns:
-            1fr;
-    }
+    .controls {
+        height: 56px;
 
-
-    .left-slot {
-        display: none;
-    }
-
-
-    .right-slot {
-        width: 100%;
-    }
-
-
-    .spine {
-        display: none;
-    }
-
-
-    .turning-sheet {
-        width: 100%;
-
-        left: 0;
+        flex-basis: 56px;
     }
 
 
     .nav-button {
-        width: 42px;
-        height: 42px;
+        width: 40px;
+        height: 40px;
 
         font-size: 23px;
     }
 
 
     .prev {
-        left: 6px;
+        left: 5px;
     }
 
 
     .next {
-        right: 6px;
+        right: 5px;
+    }
+
+
+    .editorial-page,
+    .food-page,
+    .final-page {
+
+        padding: 34px;
+    }
+
+
+    .food-page {
+        grid-template-columns: 1fr;
+    }
+
+
+    .food-art {
+        display: none;
     }
 
 
     .cover-copy,
     .destination-copy,
-    .page-final {
+    .ancestral-copy {
 
-        padding: 34px;
-    }
-
-}
-
-/* =========================================================
-   V0.5 — CLOSED COVER + ADVANCED PAGE TURN
-========================================================= */
-
-
-/* =========================================================
-   CLOSED COVER MODE
-========================================================= */
-
-.magazine.cover-mode {
-    width: 50%;
-
-    grid-template-columns: 1fr;
-
-    margin: 0 auto;
-
-    transform:
-        rotateX(2deg)
-        rotateY(-3deg)
-        translateZ(0);
-
-    transition:
-        width .75s cubic-bezier(.22,.8,.2,1),
-        transform .75s cubic-bezier(.22,.8,.2,1);
-}
-
-
-.magazine.cover-mode .left-slot {
-    display: none;
-}
-
-
-.magazine.cover-mode .right-slot {
-    grid-column: 1;
-}
-
-
-.magazine.cover-mode .spine {
-    left: 0;
-
-    opacity: .25;
-}
-
-
-.magazine.cover-mode .turning-sheet {
-    width: 100%;
-
-    left: 0;
-
-    transform-origin:
-        left center;
-}
-
-
-/* =========================================================
-   OPEN MAGAZINE MODE
-========================================================= */
-
-.magazine.open-mode {
-    width: 100%;
-
-    grid-template-columns:
-        1fr
-        1fr;
-
-    transform:
-        rotateX(1.8deg)
-        rotateY(0deg);
-
-    transition:
-        width .75s cubic-bezier(.22,.8,.2,1),
-        transform .75s cubic-bezier(.22,.8,.2,1);
-}
-
-
-/* =========================================================
-   COVER DEPTH
-========================================================= */
-
-.magazine.cover-mode .right-slot {
-
-    box-shadow:
-
-        4px 0 0 #d8d3c8,
-
-        7px 1px 0 #ede9df,
-
-        10px 2px 0 #c9c4b9,
-
-        15px 5px 22px rgba(0,0,0,.22),
-
-        inset 12px 0 25px rgba(0,0,0,.08);
-}
-
-
-/* =========================================================
-   CLOSED BOOK SHADOW
-========================================================= */
-
-.magazine.cover-mode .book-shadow {
-
-    left: 6%;
-    right: 6%;
-
-    bottom: -32px;
-
-    height: 60px;
-
-    opacity: .85;
-}
-
-
-/* =========================================================
-   OPEN BOOK SHADOW
-========================================================= */
-
-.magazine.open-mode .book-shadow {
-
-    left: 3%;
-    right: 3%;
-
-    height: 78px;
-
-    bottom: -42px;
-}
-
-
-/* =========================================================
-   PAGE TURN — EXTRA PHYSICS
-========================================================= */
-
-.turning-sheet {
-
-    --bend: 0;
-    --fold: 0;
-    --shadow-power: 0;
-
-    perspective: 2600px;
-
-    will-change:
-        transform,
-        filter;
-
-    transition:
-        none;
-}
-
-
-/* =========================================================
-   TRAVELING FOLD
-========================================================= */
-
-.turning-sheet::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    bottom: 0;
-
-    right: -1px;
-
-    width: 32%;
-
-    z-index: 100;
-
-    pointer-events: none;
-
-    opacity:
-        var(--fold);
-
-    background:
-
-        linear-gradient(
-            90deg,
-
-            transparent 0%,
-
-            rgba(255,255,255,.05) 18%,
-
-            rgba(255,255,255,.24) 42%,
-
-            rgba(0,0,0,.08) 58%,
-
-            rgba(0,0,0,.30) 78%,
-
-            transparent 100%
-        );
-
-    filter:
-        blur(.35px);
-
-    transform:
-        translateX(
-            calc(
-                -1px *
-                var(--fold-offset, 0)
-            )
-        );
-
-    will-change:
-        opacity,
-        transform;
-}
-
-
-/* =========================================================
-   DEEPER PAGE SHADOW
-========================================================= */
-
-.turning-sheet::after {
-
-    opacity:
-        var(--shadow-power);
-
-    background:
-
-        linear-gradient(
-            90deg,
-
-            transparent 0%,
-
-            rgba(0,0,0,.03) 24%,
-
-            rgba(0,0,0,.11) 48%,
-
-            rgba(0,0,0,.32) 76%,
-
-            rgba(0,0,0,.53) 100%
-        );
-}
-
-
-/* =========================================================
-   FRONT PAPER SHADING
-========================================================= */
-
-.turning-sheet.active .turn-front {
-
-    box-shadow:
-
-        inset -14px 0 22px rgba(255,255,255,.10),
-
-        inset -42px 0 45px rgba(0,0,0,.08);
-}
-
-
-/* =========================================================
-   BACK PAPER SHADING
-========================================================= */
-
-.turning-sheet.active .turn-back {
-
-    box-shadow:
-
-        inset 17px 0 26px rgba(0,0,0,.16),
-
-        inset -8px 0 18px rgba(255,255,255,.07);
-}
-
-
-/* =========================================================
-   CAST SHADOW ON BOOK
-========================================================= */
-
-.page-cast-shadow {
-
-    position: absolute;
-
-    width: 50%;
-    height: 100%;
-
-    top: 0;
-    left: 50%;
-
-    z-index: 250;
-
-    pointer-events: none;
-
-    opacity: 0;
-
-    background:
-
-        linear-gradient(
-            90deg,
-
-            rgba(0,0,0,.34),
-
-            rgba(0,0,0,.14) 28%,
-
-            rgba(0,0,0,.04) 58%,
-
-            transparent 100%
-        );
-
-    filter:
-        blur(3px);
-
-    transform-origin:
-        left center;
-
-    will-change:
-        opacity,
-        transform;
-}
-
-
-/* =========================================================
-   OPENING GLOW ON SPINE
-========================================================= */
-
-.magazine.opening .spine {
-
-    opacity: .3;
-
-    transition:
-        opacity .5s ease;
-}
-
-
-.magazine.open-mode .spine {
-
-    opacity: 1;
-
-    transition:
-        opacity .5s ease .15s;
-}
-
-
-/* =========================================================
-   MORE PHYSICAL OPEN BOOK
-========================================================= */
-
-.magazine.open-mode .left-slot {
-
-    transform:
-        perspective(1800px)
-        rotateY(.8deg)
-        rotateX(.3deg);
-}
-
-
-.magazine.open-mode .right-slot {
-
-    transform:
-        perspective(1800px)
-        rotateY(-.8deg)
-        rotateX(.3deg);
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 780px) {
-
-    .magazine.cover-mode,
-    .magazine.open-mode {
-
-        width: 100%;
-    }
-
-
-    .magazine.open-mode {
-
-        grid-template-columns: 1fr;
-    }
-
-
-    .magazine.open-mode .left-slot {
-
-        display: none;
-    }
-
-
-    .page-cast-shadow {
-
-        width: 100%;
-
-        left: 0;
-    }
-
-}
-
-/* =========================================================
-   V0.5 — CLOSED COVER + ADVANCED PAGE TURN
-========================================================= */
-
-
-/* =========================================================
-   CLOSED COVER MODE
-========================================================= */
-
-.magazine.cover-mode {
-    width: 50%;
-
-    grid-template-columns: 1fr;
-
-    margin: 0 auto;
-
-    transform:
-        rotateX(2deg)
-        rotateY(-3deg)
-        translateZ(0);
-
-    transition:
-        width .75s cubic-bezier(.22,.8,.2,1),
-        transform .75s cubic-bezier(.22,.8,.2,1);
-}
-
-
-.magazine.cover-mode .left-slot {
-    display: none;
-}
-
-
-.magazine.cover-mode .right-slot {
-    grid-column: 1;
-}
-
-
-.magazine.cover-mode .spine {
-    left: 0;
-
-    opacity: .25;
-}
-
-
-.magazine.cover-mode .turning-sheet {
-    width: 100%;
-
-    left: 0;
-
-    transform-origin:
-        left center;
-}
-
-
-/* =========================================================
-   OPEN MAGAZINE MODE
-========================================================= */
-
-.magazine.open-mode {
-    width: 100%;
-
-    grid-template-columns:
-        1fr
-        1fr;
-
-    transform:
-        rotateX(1.8deg)
-        rotateY(0deg);
-
-    transition:
-        width .75s cubic-bezier(.22,.8,.2,1),
-        transform .75s cubic-bezier(.22,.8,.2,1);
-}
-
-
-/* =========================================================
-   COVER DEPTH
-========================================================= */
-
-.magazine.cover-mode .right-slot {
-
-    box-shadow:
-
-        4px 0 0 #d8d3c8,
-
-        7px 1px 0 #ede9df,
-
-        10px 2px 0 #c9c4b9,
-
-        15px 5px 22px rgba(0,0,0,.22),
-
-        inset 12px 0 25px rgba(0,0,0,.08);
-}
-
-
-/* =========================================================
-   CLOSED BOOK SHADOW
-========================================================= */
-
-.magazine.cover-mode .book-shadow {
-
-    left: 6%;
-    right: 6%;
-
-    bottom: -32px;
-
-    height: 60px;
-
-    opacity: .85;
-}
-
-
-/* =========================================================
-   OPEN BOOK SHADOW
-========================================================= */
-
-.magazine.open-mode .book-shadow {
-
-    left: 3%;
-    right: 3%;
-
-    height: 78px;
-
-    bottom: -42px;
-}
-
-
-/* =========================================================
-   PAGE TURN — EXTRA PHYSICS
-========================================================= */
-
-.turning-sheet {
-
-    --bend: 0;
-    --fold: 0;
-    --shadow-power: 0;
-
-    perspective: 2600px;
-
-    will-change:
-        transform,
-        filter;
-
-    transition:
-        none;
-}
-
-
-/* =========================================================
-   TRAVELING FOLD
-========================================================= */
-
-.turning-sheet::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    bottom: 0;
-
-    right: -1px;
-
-    width: 32%;
-
-    z-index: 100;
-
-    pointer-events: none;
-
-    opacity:
-        var(--fold);
-
-    background:
-
-        linear-gradient(
-            90deg,
-
-            transparent 0%,
-
-            rgba(255,255,255,.05) 18%,
-
-            rgba(255,255,255,.24) 42%,
-
-            rgba(0,0,0,.08) 58%,
-
-            rgba(0,0,0,.30) 78%,
-
-            transparent 100%
-        );
-
-    filter:
-        blur(.35px);
-
-    transform:
-        translateX(
-            calc(
-                -1px *
-                var(--fold-offset, 0)
-            )
-        );
-
-    will-change:
-        opacity,
-        transform;
-}
-
-
-/* =========================================================
-   DEEPER PAGE SHADOW
-========================================================= */
-
-.turning-sheet::after {
-
-    opacity:
-        var(--shadow-power);
-
-    background:
-
-        linear-gradient(
-            90deg,
-
-            transparent 0%,
-
-            rgba(0,0,0,.03) 24%,
-
-            rgba(0,0,0,.11) 48%,
-
-            rgba(0,0,0,.32) 76%,
-
-            rgba(0,0,0,.53) 100%
-        );
-}
-
-
-/* =========================================================
-   FRONT PAPER SHADING
-========================================================= */
-
-.turning-sheet.active .turn-front {
-
-    box-shadow:
-
-        inset -14px 0 22px rgba(255,255,255,.10),
-
-        inset -42px 0 45px rgba(0,0,0,.08);
-}
-
-
-/* =========================================================
-   BACK PAPER SHADING
-========================================================= */
-
-.turning-sheet.active .turn-back {
-
-    box-shadow:
-
-        inset 17px 0 26px rgba(0,0,0,.16),
-
-        inset -8px 0 18px rgba(255,255,255,.07);
-}
-
-
-/* =========================================================
-   CAST SHADOW ON BOOK
-========================================================= */
-
-.page-cast-shadow {
-
-    position: absolute;
-
-    width: 50%;
-    height: 100%;
-
-    top: 0;
-    left: 50%;
-
-    z-index: 250;
-
-    pointer-events: none;
-
-    opacity: 0;
-
-    background:
-
-        linear-gradient(
-            90deg,
-
-            rgba(0,0,0,.34),
-
-            rgba(0,0,0,.14) 28%,
-
-            rgba(0,0,0,.04) 58%,
-
-            transparent 100%
-        );
-
-    filter:
-        blur(3px);
-
-    transform-origin:
-        left center;
-
-    will-change:
-        opacity,
-        transform;
-}
-
-
-/* =========================================================
-   OPENING GLOW ON SPINE
-========================================================= */
-
-.magazine.opening .spine {
-
-    opacity: .3;
-
-    transition:
-        opacity .5s ease;
-}
-
-
-.magazine.open-mode .spine {
-
-    opacity: 1;
-
-    transition:
-        opacity .5s ease .15s;
-}
-
-
-/* =========================================================
-   MORE PHYSICAL OPEN BOOK
-========================================================= */
-
-.magazine.open-mode .left-slot {
-
-    transform:
-        perspective(1800px)
-        rotateY(.8deg)
-        rotateX(.3deg);
-}
-
-
-.magazine.open-mode .right-slot {
-
-    transform:
-        perspective(1800px)
-        rotateY(-.8deg)
-        rotateX(.3deg);
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 780px) {
-
-    .magazine.cover-mode,
-    .magazine.open-mode {
-
-        width: 100%;
-    }
-
-
-    .magazine.open-mode {
-
-        grid-template-columns: 1fr;
-    }
-
-
-    .magazine.open-mode .left-slot {
-
-        display: none;
-    }
-
-
-    .page-cast-shadow {
-
-        width: 100%;
-
-        left: 0;
+        left: 9%;
+        right: 9%;
     }
 
 }
