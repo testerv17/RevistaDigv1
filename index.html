@@ -36,6 +36,7 @@
         <button
             class="nav-button prev"
             id="prevButton"
+            aria-label="Página anterior"
         >
             ‹
         </button>
@@ -43,72 +44,338 @@
 
         <div class="stage">
 
-            <div class="magazine" id="magazine">
+            <div
+                class="flip-book"
+                id="book"
+            >
 
-                <!-- SOMBRA GENERAL -->
+                <!-- =====================================================
+                     PORTADA
+                ====================================================== -->
 
-                <div class="book-shadow"></div>
-
-
-                <!-- =========================
-                     PÁGINA IZQUIERDA
-                ========================== -->
-
-                <section
-                    class="page-slot left-slot"
-                    id="leftSlot"
+                <div
+                    class="page page-cover"
+                    data-density="hard"
                 >
-                </section>
 
+                    <div class="page-inner cover-page">
 
-                <!-- =========================
-                     LOMO
-                ========================== -->
+                        <div class="cover-light"></div>
 
-                <div class="spine">
+                        <div class="cover-copy">
 
-                    <div class="spine-light"></div>
+                            <span class="eyebrow light">
+                                EDICIÓN 01 · MÉXICO ESENCIAL
+                            </span>
 
-                    <div class="spine-shadow"></div>
+                            <h1>
+                                MÉXICO
+                            </h1>
+
+                            <div class="accent-line"></div>
+
+                            <h2>
+                                Tierra que se vive
+                            </h2>
+
+                            <p>
+                                Cultura · Destinos · Gastronomía ·
+                                Historias · Naturaleza · Arquitectura
+                            </p>
+
+                        </div>
+
+                        <span class="page-number light">
+                            01
+                        </span>
+
+                    </div>
 
                 </div>
 
 
-                <!-- =========================
-                     PÁGINA DERECHA
-                ========================== -->
+                <!-- =====================================================
+                     PÁGINA 02
+                ====================================================== -->
 
-                <section
-                    class="page-slot right-slot"
-                    id="rightSlot"
-                >
-                </section>
+                <div class="page">
 
-                <div
-    class="page-cast-shadow"
-    id="pageCastShadow"
-></div>
+                    <div class="page-inner editorial-page">
 
+                        <span class="eyebrow">
+                            MÉXICO ESENCIAL
+                        </span>
 
-                <!-- =========================
-                     HOJA ANIMADA
-                ========================== -->
+                        <h2>
+                            Un país.<br>
+                            Miles de historias.
+                        </h2>
 
-                <div
-                    class="turning-sheet"
-                    id="turningSheet"
-                >
+                        <p class="lead">
+                            México no se descubre únicamente
+                            recorriendo kilómetros.
+                        </p>
 
-                    <div
-                        class="turn-page turn-front"
-                        id="turnFront"
-                    >
+                        <p>
+                            Se descubre entrando en mercados,
+                            escuchando plazas, siguiendo caminos,
+                            probando sabores y entendiendo
+                            la memoria de cada región.
+                        </p>
+
+                        <p>
+                            Esta revista nace para contar ese México:
+                            el que se vive, se prueba, se camina
+                            y se recuerda.
+                        </p>
+
+                        <span class="page-number">
+                            02
+                        </span>
+
                     </div>
 
-                    <div
-                        class="turn-page turn-back"
-                        id="turnBack"
-                    >
+                </div>
+
+
+                <!-- =====================================================
+                     PÁGINA 03
+                ====================================================== -->
+
+                <div class="page">
+
+                    <div class="page-inner destination-page">
+
+                        <div class="destination-bg"></div>
+
+                        <div class="destination-glow"></div>
+
+                        <div class="destination-gradient"></div>
+
+                        <div class="destination-copy">
+
+                            <span class="eyebrow light">
+                                DESTINOS
+                            </span>
+
+                            <h2>
+                                Oaxaca
+                            </h2>
+
+                            <h3>
+                                Donde la tierra tiene memoria
+                            </h3>
+
+                            <p>
+                                Montañas, mercados, arquitectura
+                                y siglos de historia.
+                            </p>
+
+                        </div>
+
+                        <span class="page-number light">
+                            03
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     PÁGINA 04
+                ====================================================== -->
+
+                <div class="page">
+
+                    <div class="page-inner editorial-page">
+
+                        <span class="eyebrow">
+                            HISTORIAS DE MÉXICO
+                        </span>
+
+                        <h2>
+                            El arte de detener el tiempo
+                        </h2>
+
+                        <p class="lead">
+                            Hay lugares que no necesitan
+                            explicarse demasiado.
+                        </p>
+
+                        <p>
+                            Basta caminar sus calles, entrar en sus
+                            mercados y mirar cómo cambia la luz
+                            sobre las fachadas.
+                        </p>
+
+                        <p>
+                            México permanece vivo precisamente
+                            porque sus historias continúan
+                            transformándose.
+                        </p>
+
+                        <span class="page-number">
+                            04
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     PÁGINA 05
+                ====================================================== -->
+
+                <div class="page">
+
+                    <div class="page-inner food-page">
+
+                        <div class="food-copy">
+
+                            <span class="eyebrow">
+                                GASTRONOMÍA
+                            </span>
+
+                            <h2>
+                                Sabores que cuentan historias
+                            </h2>
+
+                            <p>
+                                Ingredientes, técnicas y tradiciones
+                                convierten la cocina mexicana
+                                en una forma de identidad.
+                            </p>
+
+                            <div class="food-tags">
+                                <span>MOLE</span>
+                                <span>MAÍZ</span>
+                                <span>CHILE</span>
+                                <span>CACAO</span>
+                            </div>
+
+                        </div>
+
+                        <div class="food-art">
+
+                            <div class="food-circle">
+                                MÉXICO
+                            </div>
+
+                        </div>
+
+                        <span class="page-number">
+                            05
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     PÁGINA 06
+                ====================================================== -->
+
+                <div class="page">
+
+                    <div class="page-inner ancestral-page">
+
+                        <div class="ancestral-pattern"></div>
+
+                        <div class="ancestral-copy">
+
+                            <span class="eyebrow light">
+                                MÉXICO ANCESTRAL
+                            </span>
+
+                            <h2>
+                                La memoria<br>
+                                sigue viva
+                            </h2>
+
+                            <p>
+                                Lenguas, técnicas, rituales,
+                                arquitectura y tradiciones
+                                sobreviven al paso de los siglos.
+                            </p>
+
+                        </div>
+
+                        <span class="page-number light">
+                            06
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     PÁGINA 07
+                ====================================================== -->
+
+                <div class="page">
+
+                    <div class="page-inner final-page">
+
+                        <span class="eyebrow light">
+                            PRÓXIMA PARADA
+                        </span>
+
+                        <h2>
+                            México<br>
+                            comienza aquí.
+                        </h2>
+
+                        <p>
+                            Sigue recorriendo el país,
+                            una historia a la vez.
+                        </p>
+
+                        <span class="page-number light">
+                            07
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     CONTRAPORTADA
+                ====================================================== -->
+
+                <div
+                    class="page page-cover"
+                    data-density="hard"
+                >
+
+                    <div class="page-inner back-cover">
+
+                        <div class="back-cover-content">
+
+                            <span>
+                                MÉXICO
+                            </span>
+
+                            <p>
+                                Revista Digital
+                            </p>
+
+                            <div class="back-line"></div>
+
+                            <small>
+                                EDICIÓN 01
+                            </small>
+
+                        </div>
+
+                        <span class="page-number light">
+                            08
+                        </span>
+
                     </div>
 
                 </div>
@@ -121,6 +388,7 @@
         <button
             class="nav-button next"
             id="nextButton"
+            aria-label="Página siguiente"
         >
             ›
         </button>
@@ -135,6 +403,7 @@
         </button>
 
         <div class="counter">
+
             <span id="pageCounter">
                 01
             </span>
@@ -146,6 +415,7 @@
             <span id="totalCounter">
                 08
             </span>
+
         </div>
 
         <button id="fullscreenButton">
@@ -156,6 +426,15 @@
 
 </div>
 
+
+<!--
+    StPageFlip 2.0.7
+    Browser bundle desde jsDelivr.
+-->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js">
+</script>
 
 <script src="js/magazine.js"></script>
 
